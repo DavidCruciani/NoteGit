@@ -6,7 +6,7 @@ creation git, ssh
 
 https://www.circl.lu/services/forensic-training-materials/
 
-#### https://www.circl.lu/assets/files/forensics-101.pdf
+### https://www.circl.lu/assets/files/forensics-101.pdf
 
 ##### intervention
 
@@ -75,7 +75,7 @@ Un hardware write blocker empeche les attaques contrairement à des outils comme
 
 
 
-#### https://www.circl.lu/assets/files/forensics-102.pdf
+### https://www.circl.lu/assets/files/forensics-102.pdf
 
 TSk command at slide 11
 
@@ -175,7 +175,7 @@ A file is resident if it is the primary copy of the file (as opposed to a backup
 
 
 
-#### https://www.circl.lu/assets/files/forensics-103.pdf
+### https://www.circl.lu/assets/files/forensics-103.pdf
 
 #### Windows Registry
 
@@ -374,9 +374,48 @@ Memory dump
 
 
 
+### https://forensicswiki.xyz/wiki/index.php?title=Prefetch
+
+Les fichiers Prefetch windows sont désignés pour améliorer le démarrage d'application.
+
+Les fichiers Prefetch contiennent :
+
+- Le nom de l'executable
+- une liste unicode des DLLs utilisé par l'exe
+- un compteur du nombre d'execution 
+- et un timestamp de la dernière execution
+
+**<u>Attention:</u>**  Les Prefetch sont désactivé par défault sur les SSD
 
 
 
+Les noms de fichiers Prefetch suivent un format définis:
+
+- Nom de l'exe en majuscule
+- un tiret
+- Un hash de 8 caractères de la localisation de l'appli
+- une extension `.pf`
+
+
+
+Les fichiers Prefetch contiennent:
+
+- Le nom de l'exe, jusqu'à 29 caractères
+- Le nombre d'execution ou le temps que l'appli à tournée
+- Info sur le volume
+- La taille du fichier Prefetch
+- Le fichier et dossier où l'appli est lancé
+
+Contiens également 2 timestamps:
+
+- Le temps de la dernière execution de l'appli (version 26 garde les 7 dernières executions)
+- Le temps de création du volume sur lequel le fichier Prefetch a été créé.
+
+
+
+##### Registry Keys
+
+`HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters`
 
 
 
