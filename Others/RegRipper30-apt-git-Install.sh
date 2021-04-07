@@ -2,7 +2,7 @@
 #Installs latest RegRipper3.0
 #Installs win32-registry-perl
 
-echo sudo is required
+#echo sudo is required
 echo git is required
 echo apt is required
 which git || exit
@@ -18,9 +18,9 @@ git clone https://github.com/keydet89/RegRipper3.0.git
 mv RegRipper3.0 regripper
 mkdir /usr/share/regripper
 
-user="/home/david/bin/"
+user="/home/dacruciani/bin/"
 
-ln -s /home/david/bin/regripper/plugins /usr/share/regripper/plugins 2>/dev/nul
+cp -r /home/david/bin/regripper/plugins /usr/share/regripper/plugins
 chmod 755 regripper/* || exit
 #Copy RegRipper Specific perl modules
 cp regripper/File.pm /usr/share/perl5/Parse/Win32Registry/WinNT/File.pm
