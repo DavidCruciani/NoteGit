@@ -74,8 +74,7 @@ et ensuite le monter:
     - [x] Browser history (bdd sqlite)
     - [x] evtx (log system)
     - [x] Recent file
-    - [ ] filesystem contient plusieurs fois des metadata
-
+    
 - [ ] Mettre en correlation et faire l'histoire de la machine
 
 
@@ -89,6 +88,8 @@ et ensuite le monter:
 ` find . -name '*.pf'` cherche des prefetch files
 
 `Windows\` pas de dossier Prefetch il est possible qu'il soit désactivé dans la Registry
+
+`HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters`
 
 
 
@@ -104,6 +105,16 @@ Explorer: `C:\Users\<username>\AppData\Local\Microsoft\Windows\WebCache\`
 
 
 
+##### python-sqlite-to-csv
+
+https://github.com/Farigen/python-sqlite-to-csv
+
+When obtain the browser history, we have a sqlite file.
+
+This program in python change the sqlite file into a csv file
+
+
+
 #### Logs
 
 - [x] recuperation
@@ -111,6 +122,28 @@ Explorer: `C:\Users\<username>\AppData\Local\Microsoft\Windows\WebCache\`
 Location: `/Windows/System32/winevt/Logs/`
 
 Application.evtx --- Internet explorer.evtx --- Operational.evtx --- Security.evtx --- Setup.evtx --- System.evtx
+
+##### Python script
+
+This script will just extract events and parse them into a json format
+
+```Python
+#pip install evtx
+from evtx import PyEvtxParser
+import sys
+
+def main():
+    ev = sys.argv[1]
+
+    parser = PyEvtxParser(ev)
+    for record in parser.records_json():
+        print(f'Event Record ID: {record["event_record_id"]}')
+        print(f'Event Timestamp: {record["timestamp"]}')
+        print(record['data'])
+        print(f'------------------------------------------')
+
+main()
+```
 
 
 
@@ -123,6 +156,115 @@ Location: `\Users\John\AppData\Roaming\Microsoft\Windows\Recent\AutomaticDestina
 - Jump list
 
 - *.lnk
+
+
+
+##### JumpList_Lnk_Parser
+
+https://github.com/salehmuhaysin/JumpList_Lnk_Parser
+
+This code give some infomration on jump list file and lnk file
+
+<u>Note</u>: the output of the program is not optimal and display more than once for a unique jmp file analysis
+
+
+
+#### Registry
+
+- [x] recuperation
+
+Location: `Windows/System32/config`
+
+##### regrip.py 
+
+Outil non trivial, necessite tjrs de préciser un plugins à la fin de la commande
+
+`python3 regrip.py --root /home/dacruciani/VM/Windows_2012/mnt/win12/ compname`: Nom du pc
+
+`regrip.py -l` list des plugins 
+
+timeline
+
+`regrip.py --root /home/dacruciani/VM/Windows_2012/mnt/win12/ regtime > ../bodytime.txt`
+
+`mactime -b bodytime.txt -d > timeline_registry.csv`
+
+
+
+https://miloserdov.org/?p=5448
+
+##### regipy
+
+- [x] 
+
+```bash
+sudo pip3 install regipy
+
+registry-plugins-run /home/dacruciani/VM/Windows_2012/mnt/win12/Windows/System32/config/SOFTWARE -o SOFT.json
+
+registry-parse-header /home/dacruciani/VM/Windows_2012/mnt/win12/Windows/System32/config/SOFTWARE
+```
+
+##### virt-win-reg
+
+- [ ] 
+
+include in libguestfs, extract Windows registry hives directly from virtual disks
+
+```bash
+sudo apt install libguestfs-tools
+
+virt-win-reg '/mnt/disk_d/win12/Windows10.vdi' 'HKEY_LOCAL_MACHINE\SYSTEM' > SYSTEM.reg
+```
+
+##### winregfs
+
+- [ ] 
+
+mount registry
+
+```bash
+sudo apt install winregfs
+
+mkdir /tmp/reg
+mount.winregfs /mnt/disk_d/Share/config/SOFTWARE /tmp/reg
+
+ls -l /tmp/reg/Microsoft/Windows/CurrentVersion/Run
+
+for X in /tmp/reg/Microsoft/Windows/CurrentVersion/Run/*; do echo -en "$X\n "; cat "$X"; echo; done
+```
+
+##### libregf
+
+- [ ] Not tested
+
+same as **winregfs**
+
+```bash
+sudo apt install libregf-utils
+
+mkdir /tmp/reg
+regfmount /mnt/disk_d/Share/config/SOFTWARE /tmp/reg
+
+ls -l '/tmp/reg/Microsoft/Windows/CurrentVersion/Run/(values)/'
+for X in '/tmp/reg/Microsoft/Windows/CurrentVersion/Run/(values)/'*; do echo -en "$X\n "; cat "$X"; echo; done
+```
+
+
+
+
+
+#### Wine utilisation
+
+`wine rip.exe -p Z:/home/dacruciani/VM/Windows_2012/mnt/win12/ -r SYSTEM`
+
+miss of `wine32`
+
+
+
+
+
+
 
 
 
@@ -145,6 +287,29 @@ https://tmuxcheatsheet.com/
 
 
 #### Linux
+
+list directory only:
+
+`ls -l -d */`
+
+##### python
+
+Creation d'environement python:
+
+```bash
+pip install virtualenv
+virtualenv pythonregrip
+
+#Pour actver l'environnemnt
+source pythonregrip/bin/activate
+
+#Pour le désactiver
+deactivate
+```
+
+
+
+
 
 
 
@@ -211,6 +376,87 @@ cp regripper/rip.pl.linux /usr/local/bin/rip.pl && echo “ Success /usr/local/s
 /usr/local/bin/rip.pl  && printf "\n\n  Regipper file rip.pl has been changed!!\n  Original file is located in /usr/local/src/regripper/rip.pl\n\n"
 
 ```
+
+
+
+#### regrippy
+
+https://github.com/airbus-cert/regrippy
+
+pas de pip donc installation en local:
+
+```sh
+curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+python3 get-pip.py --user
+```
+
+installé dans `/home/dacruciani/.local/bin`
+
+donc ajout au PATH:
+
+```bash
+export PATH="/home/dacruciani/.local/bin:$PATH"
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
