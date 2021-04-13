@@ -81,6 +81,8 @@ et ensuite le monter:
 
 ### Analyse du disk
 
+https://www.sans.org/security-resources/posters/windows-forensic-analysis/170/download
+
 #### Prefetch
 
 - [ ] recuperation
@@ -151,11 +153,15 @@ main()
 
 - [x] recuperation
 
-Location: `\Users\John\AppData\Roaming\Microsoft\Windows\Recent\AutomaticDestinations\`
+Location_lnk: `/VM/Windows_2012/mnt/win12/Users/admin/Recent`
 
-- Jump list
+Location_jmp: `/VM/Windows_2012/mnt/win12/Users/admin/Recent/AutomaticDestination`
 
-- *.lnk
+
+
+jmp_util:<span style="color:blue;"> Nom d'application peuvent etre obtenu</span>
+
+lnk_util:<span style="color:blue;"> chemin d'application peuvent etre obtenu</span>
 
 
 
@@ -169,11 +175,15 @@ This code give some infomration on jump list file and lnk file
 
 
 
+
+
 #### Registry
 
 - [x] recuperation
 
 Location: `Windows/System32/config`
+
+Location: `Users/admin/NTUSER.dat`
 
 ##### regrip.py 
 
@@ -191,6 +201,16 @@ timeline
 
 
 
+To install software key: `Microsoft/Windows/CurrentVersion/Uninstall`
+
+
+
+<span style="color:blue;">Application install folder can be obtain</span>
+
+
+
+
+
 https://miloserdov.org/?p=5448
 
 ##### regipy
@@ -203,23 +223,34 @@ sudo pip3 install regipy
 registry-plugins-run /home/dacruciani/VM/Windows_2012/mnt/win12/Windows/System32/config/SOFTWARE -o SOFT.json
 
 registry-parse-header /home/dacruciani/VM/Windows_2012/mnt/win12/Windows/System32/config/SOFTWARE
+
+registry-dump NTUSER.DAT -o ntusr.json
+
 ```
+
+`cat ntusr.json | grep -i LastVisited | less`: permet d'obtenir les fichiers lancé en derniers (Hexa)
+
+`cat ntusr.json | grep -i UserAssist | less` : User Assist (ROT13)
+
+
 
 ##### virt-win-reg
 
-- [ ] 
+- [ ] Not working because of right, must be run into sudo mode
 
 include in libguestfs, extract Windows registry hives directly from virtual disks
 
 ```bash
 sudo apt install libguestfs-tools
 
-virt-win-reg '/mnt/disk_d/win12/Windows10.vdi' 'HKEY_LOCAL_MACHINE\SYSTEM' > SYSTEM.reg
+# guestmount -a '/mnt/disk_d/Виртуальные машины/Windows Server 2019.vdi' -i --ro /tmp/guest  # permet de mount un disk virtuel
+
+virt-win-reg 'Windows10.vdi' 'HKEY_LOCAL_MACHINE\SYSTEM' > SYSTEM.reg
 ```
 
 ##### winregfs
 
-- [ ] 
+- [ ] Not tested
 
 mount registry
 
@@ -262,13 +293,16 @@ miss of `wine32`
 
 
 
+#### libguestfs
+
+Cet outil contient une librairie permettant de comparer 2 état d'une VM: `virt-diff`
+
+Erreur: `libguestfs: error: file receive cancelled by daemon
+virt-diff: error getting extended attrs for /Users/Administrateur/AppData/Local/Packages/Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy/LocalState/TargetedContentCache/v3/280811 a85dd791c185464cb6f68cacdcb95f61_3`
 
 
 
-
-
-
-
+Je n'ai pas réussi a le faire fonctionner, peut etre qu'il faut obtenir les images differement, les snapshots ne sont pas bien pris...
 
 
 
@@ -306,8 +340,6 @@ source pythonregrip/bin/activate
 #Pour le désactiver
 deactivate
 ```
-
-
 
 
 
