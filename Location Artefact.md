@@ -21,7 +21,7 @@ Location: `C:\Users\NTUSER.dat`
 
 *GUI-based programs launched from the desktop are tracked in the launcher on a Windows System.*
 
-- Software\Microsoft\Windows\Currentversion\Explorer\UserAssist\{GUID}\Count
+- Software\Microsoft\Windows\Currentversion\Explorer\UserAssist\\{GUID}\Count
 
 
 
@@ -181,6 +181,14 @@ Location: `C:\Users\NTUSER.dat`
 
 
 
+##### Unistall program
+
+*path to the uninstaller of a installed program*
+
+- \Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall
+
+
+
 #### SAM
 
 ##### Last Login
@@ -329,6 +337,23 @@ Location: `C:\Users\NTUSER.dat`
 - Win7/8/10:
     - %USERPROFILE%\AppData\Roaming\Microsoft\Windows\Recent
     - %USERPROFILE%\AppData\Roaming\Microsoft\Office\Recent
+
+
+
+##### Startup Folder
+
+*Installed Program display in the start menu*
+
+- ProgramData\Microsoft\Windows\Start Menu\Programs
+- C:\Users\\"User"\AppData\Roaming\Microsoft\Windows\Start Menu\Programs
+
+
+
+##### Icon Packages
+
+*path to file who contains icons of searches of the user, file in BMP format*
+
+- C:\Users\\"users"\AppData\Local\Packages\Microsoft.Windows.Search_cw5n1h2txyewy\LocalState\AppIconCache\100
 
 
 

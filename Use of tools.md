@@ -238,7 +238,7 @@ registry-dump NTUSER.DAT -o ntusr.json
 
 - [ ] Not working because of right, must be run into sudo mode
 
-include in libguestfs, extract Windows registry hives directly from virtual disks
+include in [libguestfs](#libguestfs), extract Windows registry hives directly from virtual disks
 
 ```bash
 sudo apt install libguestfs-tools
@@ -302,9 +302,11 @@ virt-diff: error getting extended attrs for /Users/Administrateur/AppData/Local/
 
 
 
-Je n'ai pas réussi a le faire fonctionner, peut etre qu'il faut obtenir les images differement, les snapshots ne sont pas bien pris...
+En essayant d'utiliser *guestmount* qui permet de monter un disque virtuel j'ai eu la meme erreur, pour la corriger il faut que le kernel soit lisible:
 
+`sudo chmod +r /boot/vmlinuz-*`
 
+`guestmount -a 'Windows 10-disk001.vmdk' -i --ro imgmount/`
 
 #### tree
 
