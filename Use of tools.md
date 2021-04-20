@@ -2,6 +2,8 @@
 
  `VBoxManage clonehd windows2012.vdi output.img --format RAW`: passer de disque vdi pour vbox à un disque exploitable pour TSK
 
+`qemu-img convert -f vmdk -O raw image.vmdk image.img`
+
 ### The Sleuth Kit
 
 `mmstat output.img` donne le type de volume du systeme
@@ -146,6 +148,36 @@ def main():
 
 main()
 ```
+
+
+
+##### Python-evtx
+
+https://github.com/williballenthin/python-evtx
+
+Parse evtx file
+
+```bash
+pip install python-evtx
+
+evtxdump Application.evtx > app.xml
+```
+
+
+
+##### EVTXtract
+
+https://github.com/williballenthin/EVTXtract
+
+Parse evtx file from a raw image
+
+```
+pip install evtxtract
+
+evtxtract out.img > evtx.xml
+```
+
+
 
 
 

@@ -421,6 +421,11 @@ Contiens également 2 timestamps:
 
 
 
+## Réunion
+
+1er avril: apprentissage, lecture, test outils
+8 avril: définition du sujet plus dans le détails
+
 
 
 
