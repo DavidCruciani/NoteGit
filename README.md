@@ -430,9 +430,25 @@ Contiens également 2 timestamps:
 
 
 
+## Journal
+
+#### Tentative yara
+
+##### En montant le disque
+
+- arborescence de la machine
+- NTUSER
+- Registry
+- Evtx
 
 
 
+##### Sans monter le disque
+
+- [x] Prendre en-tete et fin de programme en hexa, fair gaffe a chaque version
+- [ ] Strings dans exe
+- [ ] Strings dans le disque qui correspond au programme voulu
+- [ ] evtxtract: sors les evtx san,s monter le disque
 
 
 
