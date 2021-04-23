@@ -452,6 +452,42 @@ Contiens également 2 timestamps:
 
 
 
+#### Méthode
+
+- Install a software on a machine, change the machine into a raw format.
+
+- Uninstall the software and change again the machine into a raw format
+
+
+
+- keep the principal exe of the software and take the first 30 lines of hexadecimal of this exe and to the same with the end of the exe:
+
+`xxd my_disk.img | head -n 30 | cut -c11-50`            `xxd my_disk.img | tail -n 30 | cut -c11-50`
+
+
+
+- After that, do `strings` on the exe and look for line who can be find only in this exe: `name="PuTTY"`
+
+If no line is usable, do without.
+
+
+
+- You can do `strings` on the disk with `grep `  to see all output readable who match with the software
+
+
+
+- Finally just try your rule yara on the disk and apply some change if the rule is to general:
+
+`yara -s -w my_rule.yar my_disk.img`
+
+
+
+
+
+
+
+
+
 
 
 
