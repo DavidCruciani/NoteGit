@@ -484,6 +484,10 @@ If no line is usable, do without.
 
 
 
+- `fls -o 104448 -r out.img > out_fls` : create the tree of the raw image 
+
+
+
 
 
 

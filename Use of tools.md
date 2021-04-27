@@ -34,6 +34,10 @@
 
 
 
+`fls -o 104448 -r out_winrar.img > out_winrar_fls`
+
+
+
 
 
 ### Monter un disk
