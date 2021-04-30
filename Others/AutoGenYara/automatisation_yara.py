@@ -1,9 +1,10 @@
 import string
 import datetime
 import argparse
+import os
 
 def get_arguments():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(prog="AutoGenYara", usage='%(prog)s [options] -f path to file', description="Create yara rule")
     parser.add_argument("-f", "--file", dest="a_file", help="Add a file to do one yara rule. File name must begin with @ and have an other @ after name of software: @PuTTY@machine")
     parser.add_argument("-d", "--directory", dest="directory", help="Pass a directory to do multiple yara rules")
     options = parser.parse_args()
@@ -41,14 +42,46 @@ def create_rule(ext, s):
     return rules
 
 ###Save of the rule on the disk
-def save_rule(path, ext):
+def save_rule(path, ext, rules):
     p = ""
     for i in path:
         p += i + "\\"
 
-    yara_rule = open(p + ext[1] + "_" + ext[2] + ".yar","w")
+    #yara_rule = open(p + ext[1] + "_" + ext[2] + ".yar","w")
+    yara_rule = open("%s%s_%s.yar" % (p, ext[1], ext[2]), "w")
     yara_rule.write(rules)
     yara_rule.close()
+
+
+def file_create_rule(chemin):
+    f = open(chemin, "r")
+    file_strings = f.readlines()
+
+    s = list()
+
+    try:
+        ext = chemin.split("@")
+    except:
+        print('il manque des @ dans le noms du fichier enregistré')
+        print("exemple: C:\\Programe File\\@Chrome@strings")
+        exit(1)
+
+    for i in range(0,len(file_strings)):
+        if ((not len(file_strings[i].split(" ")) > 5 and not len(file_strings[i]) > 30) \
+            or (len(file_strings[i].split(" ")) == 1 and not len(file_strings[i]) > 50)) \
+            and ext[1] in file_strings[i] and file_strings[i] not in s:
+
+                s.append(file_strings[i])
+
+    ####Creation of yara rule
+    rules = create_rule(ext, s)
+
+    print(rules)
+    #exit(0)
+
+    ###Save of the rule on the disk
+    save_rule(chemin.split("\\")[:-1], ext, rules)
+
 
 
 
@@ -57,31 +90,18 @@ def save_rule(path, ext):
 
 option = get_arguments()
 
-f = open(option.a_file)
-file_strings = f.readlines()
-
-s = list()
-
-try:
-    ext = option.a_file.split("@")
-except:
-    print('il manque des @ dans le noms du fichier enregistré')
-    print("exemple: C:\\Programe File\\@Chrome@strings")
-    exit(1)
-
-for i in range(0,len(file_strings)):
-    if ((not len(file_strings[i].split(" ")) > 5 and not len(file_strings[i]) > 30) \
-        or (len(file_strings[i].split(" ")) == 1 and not len(file_strings[i]) > 50)) \
-        and ext[1] in file_strings[i] and file_strings[i] not in s:
-
-            s.append(file_strings[i])
-
-####Creation of yara rule
-rules = create_rule(ext, s)
-
-print(rules)
-#exit(0)
-
-###Save of the rule on the disk
-
-save_rule(option.a_file.split("\\")[:-1], ext)
+if option.directory:
+    if os.path.isdir(option.directory):
+        for content in os.listdir(option.directory):
+            chemin = os.path.join(option.directory, content)
+            if os.path.isfile(chemin):
+                file_create_rule(chemin)
+    else:
+        print("This is not a directory")
+elif option.a_file:
+    if os.path.isfile(option.a_file):
+        file_create_rule(option.a_file)
+    else:
+        print("This is not a file")
+else:
+    print("No arg pass try -h")
