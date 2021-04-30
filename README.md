@@ -472,11 +472,11 @@ If no line is usable, do without.
 
 
 
-- You can do `strings` on the disk with `grep `  to see all output readable who match with the software
+- You can do `strings` on the disk with `grep `  to see all readable output who match with the software
 
 
 
-- Finally just try your rule yara on the disk and apply some change if the rule is to general:
+- Finally just try your rule yara on the disk and apply some change if the rule is too general:
 
 `yara -s -w my_rule.yar my_disk.img`
 
