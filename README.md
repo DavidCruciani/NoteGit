@@ -426,6 +426,8 @@ Contiens également 2 timestamps:
 1er avril: apprentissage, lecture, test outils
 8 avril: définition du sujet plus dans le détails
 
+27 Avril: Avancement du projet avec des regles qui fonctionne, maintenant, automatisation de la creation des regles
+
 
 
 
