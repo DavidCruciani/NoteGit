@@ -428,6 +428,8 @@ Contiens également 2 timestamps:
 
 27 Avril: Avancement du projet avec des regles qui fonctionne, maintenant, automatisation de la creation des regles
 
+5 Mai: Présentation de l'auto et reste juste a améliorer
+
 
 
 
