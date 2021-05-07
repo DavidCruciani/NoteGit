@@ -10,6 +10,11 @@ def get_arguments():
     options = parser.parse_args()
     return options
 
+def WriteFileP(s, current):
+    f = open("tmp","w")
+    f.write(s + ":" + current)
+    f.close()
+
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
@@ -56,6 +61,7 @@ def installer():
         cp = -1
         return '<div>{"stop":"stop"}</div>'
     else:
+        WriteFileP("install", lapp[list_app[cp]])
         return '<div>{"%s":"%s"}</div>' % (list_app[cp], lapp[list_app[cp]])
 
 
@@ -75,6 +81,7 @@ def uninstaller():
         cp = -1
         return '<div>{"stop":"stop"}</div>'
     else:
+        WriteFileP("uninstall", lapp[list_app[cp]])
         return '<div>{"%s":"%s"}</div>' % (list_app[cp], lapp[list_app[cp]])
 
 

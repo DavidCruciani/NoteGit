@@ -31,7 +31,6 @@ if "uninstaller" in r.url:
         print("unin")
         print(d + "\n")
         exit(0)
-
         request = "choco uninstall %s -y" % (d)
         p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
         (output, err) = p.communicate()
@@ -43,7 +42,6 @@ else:
         print("inst")
         print(d + "\n")
         exit(0)
-
         request = "choco install %s -y" % (d)
         p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
         (output, err) = p.communicate()
@@ -58,4 +56,4 @@ else:
         
         os.system("taskkill /f /im %s.exe" % (dic[d]))
 
-#os.system("shutdown /s /t 10")
+os.system("shutdown /s /t 10")
