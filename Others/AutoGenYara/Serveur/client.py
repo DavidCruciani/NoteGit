@@ -1,6 +1,7 @@
 import os
 import ast
 import time
+import psutil
 import argparse
 import requests
 import subprocess
@@ -50,13 +51,6 @@ else:
         
         print("install finish\n")
         
-        request = "start %s" % (dic[d])
-        p2 = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
-
-        time.sleep(10)
-        
-        os.system("taskkill /f /im %s.exe" % (dic[d]))
-
         # get the past to the app
         request = ["cd", "/", "&", "dir", "/s", "/b", "%s.exe" % (dic[d])]
 
@@ -64,8 +58,22 @@ else:
         (output, err) = p.communicate()
         p_status = p.wait()
         
+        path = output.decode().split("\n")[0].rstrip("\n\r")
+        
+        p = subprocess.Popen(path, stdout=subprocess.PIPE, shell=True)
+
+        time.sleep(10)
+        
+        parent = psutil.Process(p.pid)
+        children = parent.children(recursive=True)
+        print(children)
+        child_pid = children[0].pid
+        
+        subprocess.check_output("Taskkill /PID %d /F" % child_pid)
+        
+        
         # copy the app on the share folder of the vm
-        r = 'copy "' + output.decode().split("\n")[0].rstrip("\n\r") + '" \\\VBOXSVR\PartageVM\exe_extract'
+        r = 'copy "' + path + '" \\\VBOXSVR\PartageVM\exe_extract'
         
         p = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
         (output, err) = p.communicate()
