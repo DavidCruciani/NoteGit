@@ -1,17 +1,12 @@
+import os
+import sys
 import time
 import flask
 import argparse
-
-def get_arguments():
-    parser = argparse.ArgumentParser(prog="Server", usage='%(prog)s [options] -l path to list', description="Server to distribute list of app")
-    parser.add_argument("-ho", "--host", dest="host", help="Host you want, default: 0.0.0.0", default="0.0.0.0")
-    parser.add_argument("-p", "--port", dest="port", help="Port you want, default: 5000", default="5000")
-    parser.add_argument("-l", "--list", dest="list", help="List that the server will give", required=True)
-    options = parser.parse_args()
-    return options
+import allVariables
 
 def WriteFileP(s, current):
-    f = open("tmp","w")
+    f = open(os.path.dirname(sys.argv[0]) + "/tmp", "w")
     f.write(s + ":" + current)
     f.close()
 
@@ -19,8 +14,7 @@ def WriteFileP(s, current):
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
-option = get_arguments()
-f = open(option.list)
+f = open(allVariables.applist, "r")
 listapp = f.readlines()
 
 lapp = dict()
@@ -47,13 +41,11 @@ def installer():
     if flagun:
         return flask.redirect("/uninstaller")
 
-    #flag = False
     cp += 1
 
     try:
         loc = list_app[cp]
     except:
-        #flag = True
         flagun = True
         pass
 
@@ -86,4 +78,4 @@ def uninstaller():
 
 
 
-app.run(host=option.host, port=int(option.port))
+app.run(host=allVariables.host, port=int(allVariables.port))

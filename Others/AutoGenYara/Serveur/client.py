@@ -19,18 +19,19 @@ def request(host, port):
     return r, dic
 
 adress_server = "192.168.1.70" #Exemple: 192.168.1.52
+port = 5000
 
-(r, dic) = request(adress_server, 5000)
+(r, dic) = request(adress_server, port)
 for d in dic:
     if d == "stop":
-        (r, dic) = request(adress_server, 5000)
+        (r, dic) = request(adress_server, port)
     break
 
 if "uninstaller" in r.url:
     for d in dic:
         print("unin")
         print(d + "\n")
-        exit(0)
+        #exit(0)
         request = "choco uninstall %s -y" % (d)
         p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
         (output, err) = p.communicate()
@@ -41,7 +42,7 @@ else:
     for d in dic:
         print("inst")
         print(d + "\n")
-        exit(0)
+        #exit(0)
         request = "choco install %s -y" % (d)
         p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
         (output, err) = p.communicate()
@@ -55,5 +56,20 @@ else:
         time.sleep(10)
         
         os.system("taskkill /f /im %s.exe" % (dic[d]))
+
+        # get the past to the app
+        request = ["cd", "/", "&", "dir", "/s", "/b", "%s.exe" % (dic[d])]
+
+        p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
+        (output, err) = p.communicate()
+        p_status = p.wait()
+        
+        # copy the app on the share folder of the vm
+        r = 'copy "' + output.decode().split("\n")[0].rstrip("\n\r") + '" \\\VBOXSVR\PartageVM\exe_extract'
+        
+        p = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
+        (output, err) = p.communicate()
+        p_status = p.wait()
+
 
 os.system("shutdown /s /t 10")

@@ -3,17 +3,10 @@ import sys
 import time
 import argparse
 import subprocess
-
-def get_arguments():
-    parser = argparse.ArgumentParser(prog="Server", usage='%(prog)s [options] -q path to qem -v path to vm', description="Wait the end of the vm to do a copy into an other format using qemu")
-    parser.add_argument("-q", "--qemu", dest="qemu", help="Path to qemu", required=True)
-    parser.add_argument("-v", "--vm", dest="vm", help="Path to vm", required=True)
-    parser.add_argument("-o", "--out", dest="out", help="Path to save the new disk format", default=".")
-    options = parser.parse_args()
-    return options
+import allVariables
 
 def runningVms():
-    req = 'C:\\Program Files\Oracle\VirtualBox\VBoxManage.exe list runningvms'
+    req = '%s list runningvms' % (allVariables.VBoxManage)
     return subprocess.run(req, capture_output=True)
 
 def readFile():
@@ -23,7 +16,7 @@ def readFile():
     return l
 
 
-fapp = open("C:\\Users\David\Desktop\Stage Circl\Python Prog\listapp.txt", "r")
+fapp = open(allVariables.applist, "r")
 l_app = fapp.readlines()
 line_count = 0
 for line in l_app:
@@ -34,12 +27,13 @@ fapp.close()
 res = runningVms()
 
 for i in range(0,line_count*2):
-    print("boucle n: %s\n" % (i))
+    print("Boucle n: %s, %s" % (i, l_app[i % len(l_app)].split(":")[1]))
     res = runningVms()
 
-    request = ['C:\\Program Files\Oracle\VirtualBox\VBoxManage.exe', 'startvm', '{235f9214-e871-4b75-b091-c90e53b32974}']
-    if not '{235f9214-e871-4b75-b091-c90e53b32974}' in res.stdout.decode():
+    request = [allVariables.VBoxManage, 'startvm', allVariables.WindowsVM]
+    if not allVariables.WindowsVM in res.stdout.decode():
         ## Start windows machine
+        print("Windows Start")
         p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
         (output, err) = p.communicate()
         p_status = p.wait()
@@ -47,18 +41,20 @@ for i in range(0,line_count*2):
     ## wait windows machine to shutdown
     res = runningVms()
 
-    #while len(res.stdout) != 0:
-    while '{235f9214-e871-4b75-b091-c90e53b32974}' in res.stdout.decode():
+    cptime = 0
+    while allVariables.WindowsVM in res.stdout.decode():
         time.sleep(60)
+        cptime += 1
+        print("\rTime spent: %s min" % (cptime), end="")
         res = runningVms()
 
-    print("Windows stop")
+    print("\nWindows stop")
 
 
     ## Convert windows machine into raw format
-    qemu = "B:\Téléchargement\Logiciel\qemu-img-win-x64-2_3_0\qemu-img.exe"
-    vm = 'C:\\Users\David\Downloads\VM\PXE - Windows 10 _Cible_\PXE - Windows 10 [Cible]-disk001.vmdk'
-    partage = "B:\VM\PartageVM\convert\\"
+    qemu = allVariables.qemu
+    vm = allVariables.pathToWindowsVM
+    partage = allVariables.pathToConvert
     status = readFile()
 
     convert_file = "%s%s_%s.img" %(partage, status.split(":")[1], status.split(":")[0])
@@ -71,21 +67,25 @@ for i in range(0,line_count*2):
 
     res = runningVms()
 
-    request = ['C:\\Program Files\Oracle\VirtualBox\VBoxManage.exe', 'startvm', '{9f5f2d55-619b-490c-9225-a6ee4945fd5e}']
-    if not '{9f5f2d55-619b-490c-9225-a6ee4945fd5e}' in res.stdout.decode():
+    request = [allVariables.VBoxManage, 'startvm', allVariables.LinuxVM]
+    if not allVariables.LinuxVM in res.stdout.decode():
         ## Start ubuntu machine
+        print("Ubuntu Start")
         p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
         (output, err) = p.communicate()
         p_status = p.wait()
 
 
     res = runningVms()
-
-    while '{9f5f2d55-619b-490c-9225-a6ee4945fd5e}' in res.stdout.decode():
+    
+    cptime = 0
+    while allVariables.LinuxVM in res.stdout.decode():
         time.sleep(60)
+        cptime += 1
+        print("\rTime spent: %s min" % (cptime), end="")
         res = runningVms()
 
-    print("Ubuntu stop")
+    print("\nUbuntu stop")
 
     ## Suppresson of the current tmp file 
     os.remove(os.path.dirname(sys.argv[0]) + "/tmp")
