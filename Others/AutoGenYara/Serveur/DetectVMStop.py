@@ -27,7 +27,7 @@ fapp.close()
 
 res = runningVms()
 
-"""for i in range(0,line_count*2):
+for i in range(0,line_count*2):
     print("Boucle n: %s, %s" % (i, l_app[i % len(l_app)].split(":")[1]))
     res = runningVms()
 
@@ -91,7 +91,7 @@ res = runningVms()
     ## Suppresson of the current tmp file 
     os.remove(os.path.dirname(sys.argv[0]) + "/tmp")
     ## Suppression of the current raw disk
-    os.remove(convert_file)"""
+    os.remove(convert_file)
 
 
 ## AutoGeneYara
