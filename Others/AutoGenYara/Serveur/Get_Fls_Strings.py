@@ -4,7 +4,7 @@ import os
 import time
 import subprocess
 
-def fls(cheminMachine, cheminOut):
+def fls(cheminMachine, cheminOut, app_status):
 	## get the longer partition
 	request = "mmls -t dos %s | cut -c43-55 > %slength_partition" % (cheminMachine, cheminOut)
 	subprocess.call(request, shell=True)
@@ -36,7 +36,7 @@ def fls(cheminMachine, cheminOut):
 	offset = int(ls[cpmax].rstrip("\n"))
 
 
-	r = "fls -r -o %s %s > %sfls_first" % (str(offset), cheminMachine, cheminOut)
+	r = "fls -r -o %s %s > %s@%s@fls_%s.tree" % (str(offset), cheminMachine, cheminOut, app_status.split("_")[0], app_status.split("_")[1])
 
 	p = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
 	(output, err) = p.communicate()
@@ -48,8 +48,9 @@ def fls(cheminMachine, cheminOut):
 	os.remove("%slength_partition" % (cheminOut))
 	os.remove("%sstart_partition" % (cheminOut))
 	
+	
 def getStrings(appchemin, app, cheminOut, app_status):
-	r = "strings %s | grep -i %s > %s%s" % (appchemin, app, cheminOut, app_status)
+	r = "strings %s | grep -i %s > %s@%s@%s.txt" % (appchemin, app, cheminOut, app_status.split("_")[0], app_status.split("_")[1])
 	print(r)
 	
 	p = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
@@ -67,16 +68,16 @@ if __name__ == '__main__':
 	for content in os.listdir(cheminConvert):
 		appchemin = os.path.join(cheminConvert, content)
 		if os.path.isfile(appchemin):
-			fls(appchemin, cheminOut)
 			app_status = content.split(".")[0]
 			app = app_status.split("_")[0]
+			
+			fls(appchemin, cheminOut, app_status)
 
 			getStrings(appchemin, app, cheminOut, app_status)
 			
-	print("c'est fini")
+	print("finish")
+	
 
-	time.sleep(20)
-
-	subprocess.call("poweroff")
+	subprocess.call("shutdown -h -t 20", shell=True)
 	
 	

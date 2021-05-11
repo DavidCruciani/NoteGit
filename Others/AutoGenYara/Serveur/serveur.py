@@ -2,7 +2,6 @@ import os
 import sys
 import time
 import flask
-import argparse
 import allVariables
 
 def WriteFileP(s, current):

@@ -1,9 +1,10 @@
 import os
 import sys
 import time
-import argparse
+import get_pe
 import subprocess
 import allVariables
+import automatisation_yara
 
 def runningVms():
     req = '%s list runningvms' % (allVariables.VBoxManage)
@@ -26,7 +27,7 @@ fapp.close()
 
 res = runningVms()
 
-for i in range(0,line_count*2):
+"""for i in range(0,line_count*2):
     print("Boucle n: %s, %s" % (i, l_app[i % len(l_app)].split(":")[1]))
     res = runningVms()
 
@@ -90,7 +91,18 @@ for i in range(0,line_count*2):
     ## Suppresson of the current tmp file 
     os.remove(os.path.dirname(sys.argv[0]) + "/tmp")
     ## Suppression of the current raw disk
-    os.remove(convert_file)
+    os.remove(convert_file)"""
 
 
 ## AutoGeneYara
+hexa = "" 
+ProductVersion = ""
+for content in os.listdir(allVariables.pathToShareWindows):
+    chemin = os.path.join(allVariables.pathToShareWindows, content)
+    if os.path.isfile(chemin):
+        (hexa, ProductVersion) = get_pe.pe_yara(chemin)
+
+for content in os.listdir(allVariables.pathToStrings):
+    chemin = os.path.join(allVariables.pathToStrings, content)
+    if os.path.isfile(chemin):
+        automatisation_yara.inditif(chemin, ProductVersion)

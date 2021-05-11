@@ -2,7 +2,6 @@ import os
 import ast
 import time
 import psutil
-import argparse
 import requests
 import subprocess
 
