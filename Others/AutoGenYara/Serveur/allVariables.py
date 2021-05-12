@@ -1,5 +1,5 @@
-#applist = "B:\\git\\NoteGit\\Others\\AutoGenYara\\Serveur\listapp.txt"
-applist = "B:\\git\\NoteGit\\Others\\AutoGenYara\\Serveur\\app.txt"
+applist = "B:\\git\\NoteGit\\Others\\AutoGenYara\\Serveur\listapp.txt"
+#applist = "B:\\git\\NoteGit\\Others\\AutoGenYara\\Serveur\\app.txt"
 
 host = "0.0.0.0"
 port = "5000"
