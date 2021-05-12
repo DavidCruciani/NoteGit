@@ -1,6 +1,12 @@
 import os
 import string
 import datetime
+import sys
+
+s = ""
+for i in os.path.dirname(sys.argv[0]).split("/")[:-1]:
+    s += i + "/"
+sys.path.append(s + "etc")
 import allVariables
 
 
