@@ -11,6 +11,7 @@ pathToWindowsVM = "C:\\Users\David\Downloads\VM\PXE - Windows 10 _Cible_\PXE - W
 pathToShareWindows = "B:\VM\PartageVM\exe_extract"
 
 LinuxVM = "{9f5f2d55-619b-490c-9225-a6ee4945fd5e}"
+#LinuxVM = ""
 
 qemu = "B:\Téléchargement\Logiciel\qemu-img-win-x64-2_3_0\qemu-img.exe"
 
