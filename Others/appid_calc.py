@@ -133,16 +133,19 @@ def initknownguids():
     pg['%ALLUSERSPROFILE%\Microsoft\Windows\DeviceMetadataStore'] = '{5CE4A5E9-E4EB-479D-B89F-130C02886155}'
 
 def u(s):
-	print(s)
+	#print(s)
 	"""x = re.match(r"(.)", s, re.IGNORECASE | re.DOTALL | re.MULTILINE)
 	print(x)
 	if x:
-		s = re.sub(r"(.)", x.group(1) + "\x00", s, re.IGNORECASE | re.DOTALL | re.MULTILINE)
+		s = re.sub(r"(.)", x.group(0) + "\x00", s, re.IGNORECASE | re.DOTALL | re.MULTILINE)
 	print(s)"""
+	s = " ".join(s)
+	print(s)
 	return s
 
 def envpath(path):
-	path = re.sub(r"C:\\Windows", "%windir%", path, flags=re.IGNORECASE)
+	print("path: " + path)
+	path = re.sub(r"C:.*?Windows", "%windir%", path, flags=re.IGNORECASE)
 	path = re.sub(r"C:\\Users\\([^\\]+?)\\AppData\\Roaming", "%APPDATA%", path, flags=re.IGNORECASE)
 	path = re.sub(r"C:\\Users\\([^\\]+?)\\AppData\\Local", "%LOCALAPPDATA%", path, flags=re.IGNORECASE)
 	path = re.sub(r"C:\\Users\\([^\\]+?)", "%USERPROFILE%", path, flags=re.IGNORECASE)
@@ -155,10 +158,12 @@ def envpath(path):
 	return path.upper()
 
 def normpath(path):
+	#print("Avant: " + path)
 	for k in pg:
 		x = re.match(r"^{}(.*)$".format(re.escape(k)), path, flags=re.IGNORECASE)
 		if x:
 			path = re.sub(r"^{}(.*)$".format(re.escape(k)), pg[k] + x.group(1), path, flags=re.IGNORECASE)
+	#print("Apres: " + path)
 	return path
 
 
@@ -167,6 +172,7 @@ def msref():
 
 
 def print_appid(opath):
+	#print("Avant Opath: " + opath)
 	x = re.match(r'^(.+)\\([^\\]+)$', opath)
 	z = re.match(r"\.", opath)
 	if x:
@@ -175,9 +181,9 @@ def print_appid(opath):
 		epath = envpath(dire)
 		npath = normpath(epath)
 
-		m = re.match(r"\%windir\%\\(system32|syswow64|sysnative)(\\.+)?$", epath, flags=re.IGNORECASE)
-		x = re.match(r"\%ProgramFiles\%\\Common Files(\\.+)$", epath, flags=re.IGNORECASE)
-		y = re.match(r"\%ProgramFiles\%(\\.+)$", epath, flags=re.IGNORECASE)
+		m = re.match(r"%windir%\\\\(system32|syswow64|sysnative)(\\.+)?$", epath, flags=re.IGNORECASE)
+		x = re.match(r"%ProgramFiles%\\Common Files(\\.+)$", epath, flags=re.IGNORECASE)
+		y = re.match(r"%ProgramFiles%(\\.+)$", epath, flags=re.IGNORECASE)
 		if m:
 			f=""
 			if m.group(2):
@@ -205,6 +211,7 @@ def print_appid(opath):
 
 
 def appid_calc(path):
+	print("path: " + path)
 	return crc64(u(path.upper()))
 
 def _print_appid(opath, epath, npath, fname):
@@ -230,8 +237,8 @@ if len(sys.argv) == 2:
     print_appid(argv[1])
 else:
     print_appid ("c:\\windows\\notepad.exe")
-    print_appid ("c:\\windows\\system32\\notepad.exe")
-    print_appid ("c:\\windows\\syswow64\\notepad.exe")
+    print_appid (re.escape("c:\windows\system32\\notepad.exe"))
+    print_appid (re.escape("c:\windows\syswow64\\notepad.exe"))
     print_appid ("{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\\notepad.exe")
     print_appid ('c:\program files\Internet Explorer\iexplore.exe')
     print_appid ('MICROSOFT.INTERNETEXPLORER.DEFAULT')
