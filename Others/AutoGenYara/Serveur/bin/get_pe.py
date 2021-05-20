@@ -1,10 +1,14 @@
-import os
+import re
 import sys
 import pefile
 import subprocess
+import pathlib
+p = pathlib.Path(__file__).parent.absolute()
 s = ""
-for i in os.path.dirname(sys.argv[0]).split("/")[:-1]:
+for i in re.split(r"/|\\", str(p))[:-1]:
     s += i + "/"
+sys.path.append(s + "etc")
+import allVariables
 sys.path.append(s + "etc")
 import allVariables
 

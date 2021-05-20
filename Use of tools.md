@@ -418,7 +418,10 @@ list directory only:
 Creation d'environement python:
 
 ```bash
+python3 -m pip install virtualenv
 pip install virtualenv
+
+python3 -m virtualenv pythonregrip
 virtualenv pythonregrip
 
 #Pour actver l'environnemnt

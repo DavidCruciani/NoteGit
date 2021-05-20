@@ -1,21 +1,19 @@
 import os
+import re
 import sys
 import time
 import flask
+import pathlib
+p = pathlib.Path(__file__).parent.absolute()
 s = ""
-for i in os.path.dirname(sys.argv[0]).split("/")[:-1]:
+for i in re.split(r"/|\\", str(p))[:-1]:
     s += i + "/"
 sys.path.append(s + "etc")
 import allVariables
 
-def WriteFileP(s, current):
-    f = open(os.path.dirname(sys.argv[0]) + "/tmp", "w")
-    f.write(s + ":" + current)
-    f.close()
-
 
 app = flask.Flask(__name__)
-app.config["DEBUG"] = True
+#app.config["DEBUG"] = True
 
 f = open(allVariables.applist, "r")
 listapp = f.readlines()
@@ -33,6 +31,11 @@ list_app = list(lapp.keys())
 #print(list_app)
 #exit(0)
 
+def WriteFileP(s, current):
+    f = open(os.path.dirname(sys.argv[0]) + "/tmp", "w")
+    f.write(s + ":" + current)
+    f.close()
+
 @app.route('/', methods=['GET'])
 def home():
     return "<h1>AutoGene Yara</h1>"
@@ -43,19 +46,15 @@ def installer():
 
     if flagun:
         return flask.redirect("/uninstaller")
-
-    cp += 1
-
-    try:
-        loc = list_app[cp]
-    except:
-        flagun = True
-        pass
-
-    if flagun:
-        cp = -1
-        return '<div>{"stop":"stop"}</div>'
     else:
+        cp += 1
+
+        try:
+            loc = list_app[cp]
+        except:
+            exit(0)
+
+        flagun = True
         WriteFileP("install", lapp[list_app[cp]])
         return '<div>{"%s":"%s"}</div>' % (list_app[cp], lapp[list_app[cp]])
 
@@ -63,21 +62,15 @@ def installer():
 @app.route('/uninstaller', methods=['GET'])
 def uninstaller():
     global cp, flagun
-    
-    cp += 1
 
     try:
         loc = list_app[cp]
     except:
-        flagun = False
-        pass
+        exit(0)
 
-    if not flagun:
-        cp = -1
-        return '<div>{"stop":"stop"}</div>'
-    else:
-        WriteFileP("uninstall", lapp[list_app[cp]])
-        return '<div>{"%s":"%s"}</div>' % (list_app[cp], lapp[list_app[cp]])
+    flagun = False
+    WriteFileP("uninstall", lapp[list_app[cp]])
+    return '<div>{"%s":"%s"}</div>' % (list_app[cp], lapp[list_app[cp]])
 
 
 if __name__ == '__main__':
