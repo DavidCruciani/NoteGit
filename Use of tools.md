@@ -85,6 +85,33 @@ et ensuite le monter:
 
 
 
+### VBox Headless
+
+https://www.oracle.com/technical-resources/articles/it-infrastructure/admin-manage-vbox-cli.html
+
+```
+sudo apt install virtualbox-ext-pack
+
+VBoxManage setproperty vrdeauthlibrary "VBoxAuthSimple"
+VBoxManage modifyvm "Windows10" --vrdeauthtype null
+VBoxManage internalcommands passwordhash "iwpass"
+VBoxManage modifyvm "Windows10" --vrdeport 7474
+
+VBoxManage setextradata "Windows10" "VBoxAuthSimple/users/david" \ c0d77fb73ce47042e2ee2d60276bbed8a9e91116387aba28357082b5297fc1e1
+
+VBoxManage sharedfolder add Windows10 --name PartageVM --hostpath PartageVM/
+```
+
+
+
+PuTTY:
+
+Tunnel SSH:
+
+`Source port: port machine qui va se connecter`  exemple:  `5000`
+
+`Destination: ipaddr:port du service` exemple: `192.168.1.1:3389`
+
 ### Analyse du disk
 
 https://www.sans.org/security-resources/posters/windows-forensic-analysis/170/download
