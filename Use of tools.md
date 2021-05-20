@@ -91,6 +91,7 @@ https://www.oracle.com/technical-resources/articles/it-infrastructure/admin-mana
 
 ```
 sudo apt install virtualbox-ext-pack
+sudo apt install virtualbox-guest-additions-iso
 
 VBoxManage setproperty vrdeauthlibrary "VBoxAuthSimple"
 VBoxManage modifyvm "Windows10" --vrdeauthtype null
@@ -99,7 +100,10 @@ VBoxManage modifyvm "Windows10" --vrdeport 7474
 
 VBoxManage setextradata "Windows10" "VBoxAuthSimple/users/david" \ c0d77fb73ce47042e2ee2d60276bbed8a9e91116387aba28357082b5297fc1e1
 
+VBoxManage storagectl Windows10 --name "IDE Controller" --add ide
+ VBoxManage storageattach Windows10 --storagectl "IDE Controller" --port 0 --device 0 --type dvddrive --medium \ /usr/share/virtualbox/VBoxGuestAdditions.iso
 VBoxManage sharedfolder add Windows10 --name PartageVM --hostpath PartageVM/
+
 ```
 
 
