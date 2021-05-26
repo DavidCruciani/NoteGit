@@ -68,7 +68,7 @@ if __name__ == '__main__':
         print("Boucle n: %s, %s" % (i, l_app[i % len(l_app)].split(":")[1]))
         res = runningVms()
 
-        request = [allVariables.VBoxManage, 'startvm', allVariables.WindowsVM, "--type", "headless"]
+        request = [allVariables.VBoxManage, 'startvm', allVariables.WindowsVM]
         if not allVariables.WindowsVM in res.stdout.decode():
             ## Start windows machine
             print("Windows Start")

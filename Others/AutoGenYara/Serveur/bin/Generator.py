@@ -12,8 +12,6 @@ for i in re.split(r"/|\\", str(pathProg))[:-1]:
     s += i + "/"
 sys.path.append(s + "etc")
 import allVariables
-sys.path.append(s + "etc")
-import allVariables
 import OnLinux.get_Fls_Strings
 import automatisation_yara
 
@@ -23,7 +21,7 @@ def runningVms():
     return subprocess.run(req, capture_output=True)
 
 def readFile():
-    f = open(pathProg + "/tmp","r")
+    f = open(str(pathProg) + "/tmp","r")
     l = f.readline().rstrip()
     f.close()
     return l
@@ -138,7 +136,7 @@ if __name__ == '__main__':
                     Get_Fls_Strings.getStrings(appchemin, app, cheminOut, app_status)
 
         ## Suppresson of the current tmp file 
-        os.remove(os.path.dirname(sys.argv[0]) + "/tmp")
+        os.remove(str(pathProg) + "/tmp")
         ## Suppression of the current raw disk
         os.remove(convert_file)
 
