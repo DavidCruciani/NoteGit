@@ -70,7 +70,8 @@ def file_create_rule(chemin, file_version, l_app, flag = False):
 
     if allVariables.pathToFirstStringsMachine:
         first = open(allVariables.pathToFirstStringsMachine)
-        full = first.readlines()    
+        full = first.readlines() 
+        first.close()   
 
     ## Extract the term to search
     try:

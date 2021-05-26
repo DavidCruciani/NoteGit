@@ -35,7 +35,10 @@ def create_rule(ext, hexa, product_version, l_app):
     date = datetime.datetime.now()
 
     ##Headers of yara rule
-    rules = "rule %s_%s {\n\tmeta:\n\t\t" % (app, ext[1])
+    if app:
+        rules = "rule %s_%s {\n\tmeta:\n\t\t" % (app, ext[1])
+    else:
+        rules = "rule %s_%s {\n\tmeta:\n\t\t" % (ext[0], ext[1])
 
     rules += 'description = "Auto gene for %s"\n\t\t' % (str(ext[0]))
     rules += 'author = "David Cruciani"\n\t\t'
@@ -52,6 +55,12 @@ def create_rule(ext, hexa, product_version, l_app):
 
     return rules
 
+def runAuto(s):
+    pathS = os.path.join(allVariables.pathToStrings, s)
+    if os.path.isfile(pathS):
+        print(s)
+        automatisation_yara.inditif(pathS, ProductVersion, l_app)
+
 
 if __name__ == '__main__':
     fapp = open(allVariables.applist, "r")
@@ -64,7 +73,7 @@ if __name__ == '__main__':
 
     res = runningVms()
 
-    for i in range(0,line_count*2):
+    """for i in range(0,line_count*2):
         print("Boucle n: %s, %s" % (i, l_app[i % len(l_app)].split(":")[1]))
         res = runningVms()
 
@@ -139,7 +148,7 @@ if __name__ == '__main__':
         ## Suppresson of the current tmp file 
         os.remove(str(pathProg) + "/tmp")
         ## Suppression of the current raw disk
-        os.remove(convert_file)
+        os.remove(convert_file)"""
 
 
     ## AutoGeneYara
@@ -154,7 +163,20 @@ if __name__ == '__main__':
             print(rule)
             automatisation_yara.save_rule(c[0], c[1], rule)
 
-    for content in os.listdir(allVariables.pathToStrings):
+            s = "@%s@fls_install.tree" % (c[0])
+            runAuto(s)
+            
+            s = "@%s@fls_uninstall.tree" % (c[0])
+            runAuto(s)
+
+            s = "@%s@install.txt" % (c[0])
+            runAuto(s)
+
+            s = "@%s@uninstall.txt" % (c[0])
+            runAuto(s)
+
+
+    """for content in os.listdir(allVariables.pathToStrings):
         chemin = os.path.join(allVariables.pathToStrings, content)
         if os.path.isfile(chemin):
-            automatisation_yara.inditif(chemin, ProductVersion, l_app)
+            automatisation_yara.inditif(chemin, ProductVersion, l_app)"""
