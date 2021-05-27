@@ -17,7 +17,6 @@ import automatisation_yara
 
 
 def runningVms():
-    req = '%s list runningvms' % (allVariables.VBoxManage)
     req = [allVariables.VBoxManage, "list", "runningvms"]
     return subprocess.run(req, capture_output=True)
 
@@ -161,7 +160,7 @@ if __name__ == '__main__':
             c = content.split(".")
             rule = create_rule(c, hexa, ProductVersion, l_app)
             print(rule)
-            automatisation_yara.save_rule(c[0], c[1], rule)
+            automatisation_yara.save_rule(c[0], c[1], rule, 3)
 
             s = "@%s@fls_install.tree" % (c[0])
             runAuto(s)
@@ -174,9 +173,3 @@ if __name__ == '__main__':
 
             s = "@%s@uninstall.txt" % (c[0])
             runAuto(s)
-
-
-    """for content in os.listdir(allVariables.pathToStrings):
-        chemin = os.path.join(allVariables.pathToStrings, content)
-        if os.path.isfile(chemin):
-            automatisation_yara.inditif(chemin, ProductVersion, l_app)"""

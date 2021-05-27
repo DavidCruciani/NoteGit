@@ -33,7 +33,8 @@ xxd = "B:\\Téléchargement\\Logiciel\\linux_command\\xxd.exe"
 cut = "B:\\Téléchargement\\Logiciel\\linux_command\\cut.exe"
 
 #Path to strings of Windows VM without software install
-pathToFirstStringsMachine = "C:\\Users\David\Desktop\Stage Circl\Python Prog\\first_machine_strings"
+# pathToFirstStringsMachine = "C:\\Users\David\Desktop\Stage Circl\Python Prog\\first_machine_strings"
+pathToFirstStringsMachine = "B:\\VM\\PartageVM\\Windows10_first\\string_first_7zip"
 
 #Path to save yara rule on pc
 pathToYaraSave = "B:\Téléchargement\Yara"
