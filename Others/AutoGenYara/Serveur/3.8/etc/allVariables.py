@@ -36,5 +36,8 @@ cut = "B:\\Téléchargement\\Logiciel\\linux_command\\cut.exe"
 # pathToFirstStringsMachine = "C:\\Users\David\Desktop\Stage Circl\Python Prog\\first_machine_strings"
 pathToFirstStringsMachine = "B:\\VM\\PartageVM\\Windows10_first\\string_first_7zip"
 
+#Path to fls output of Windows VM without software install
+pathToFirstFls = "C:\\Users\David\Desktop\Stage Circl\Python Prog\\fls_first"
+
 #Path to save yara rule on pc
 pathToYaraSave = "B:\Téléchargement\Yara"
