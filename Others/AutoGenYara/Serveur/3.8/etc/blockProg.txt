@@ -1,1 +1,2 @@
 7z:7zip
+git-cmd:git

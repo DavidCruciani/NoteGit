@@ -104,10 +104,9 @@ http://unxutils.sourceforge.net/
 
 
 
-- [ ] verifier strings avec regex
 - [ ] 2 set de strings (les vérif et les non vérif)
 - [x] ajouter uuid
-- [ ] blacklist
+- [x] blacklist
 - [ ] installer les moins installé de chocolatey
 - [x] ajouter liste de base pour arborescence
 - [ ] tester regles sur machine

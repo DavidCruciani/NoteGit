@@ -2,6 +2,7 @@
 #applist = "B:\\git\\NoteGit\\Others\\AutoGenYara\\Serveur\\tests\listapp.txt"
 applist = "B:\\git\\NoteGit\\Others\\AutoGenYara\\Serveur\\3.8\\tests\\app.txt"
 
+#Path to list of special software
 blockProg = "B:\\git\\NoteGit\\Others\\AutoGenYara\\Serveur\\3.8\\etc\\blockProg.txt"
 
 #Settings for server flask
