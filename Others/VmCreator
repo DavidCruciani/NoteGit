@@ -1,0 +1,35 @@
+#!/bin/bash
+
+if [ ! -z $1 ]
+then
+        if [ ! -z $2 ] && [ $2 == "del" ]
+        then
+		VBoxManage modifyvm $1 --hdd none
+		VBoxManage unregistervm $1 -delete
+	else
+		cp Windows10_First.vmdk Windows10/$1.vmdk
+
+		VBoxManage internalcommands sethduuid Windows10/$1.vmdk
+		echo
+
+		VBoxManage createvm --name $1 --ostype Windows10_64 --register
+		echo
+		VBoxManage modifyvm $1 --cpus 6 --memory 16000 --vram 128
+
+		VBoxManage modifyvm $1 --nic1 nat
+
+		VBoxManage storagectl $1 --name "SATA Controller" --add sata --bootable on
+
+		VBoxManage storageattach $1 --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium Windows10/$1.vmdk
+
+		VBoxManage storagectl $1 --name "IDE Controller" --add ide
+		VBoxManage storageattach $1 --storagectl "IDE Controller" --port 0 --device 0 --type dvddrive --medium /usr/share/virtualbox/VBoxGuestAdditions.iso
+		VBoxManage sharedfolder add $1 --name PartageVM --hostpath PartageVM/
+
+		VBoxManage setproperty vrdeauthlibrary "VBoxAuthSimple"
+		VBoxManage modifyvm $1 --vrdeauthtype null
+		VBoxManage modifyvm $1 --vrde on --vrdeport 3389
+	fi
+else
+        echo "miss Name of VM"
+fi
