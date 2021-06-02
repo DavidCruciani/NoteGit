@@ -1,6 +1,6 @@
 #Path to the list that contains software to install: "nameOfPackage":"nameOfExe"
 #applist = "B:\\git\\NoteGit\\Others\\AutoGenYara\\Serveur\\tests\listapp.txt"
-applist = "B:\\git\\NoteGit\\Others\\AutoGenYara\\Serveur\\tests\\app.txt"
+applist = "B:\\git\\NoteGit\\Others\\AutoGenYara\\Serveur\\3.8\\tests\\app.txt"
 
 #Settings for server flask
 host = "0.0.0.0"
@@ -33,7 +33,11 @@ xxd = "B:\\Téléchargement\\Logiciel\\linux_command\\xxd.exe"
 cut = "B:\\Téléchargement\\Logiciel\\linux_command\\cut.exe"
 
 #Path to strings of Windows VM without software install
-pathToFirstStringsMachine = "C:\\Users\David\Desktop\Stage Circl\Python Prog\\first_machine_strings"
+# pathToFirstStringsMachine = "C:\\Users\David\Desktop\Stage Circl\Python Prog\\first_machine_strings"
+pathToFirstStringsMachine = "B:\\VM\\PartageVM\\Windows10_first\\string_first_7zip"
+
+#Path to fls output of Windows VM without software install
+pathToFirstFls = "C:\\Users\David\Desktop\Stage Circl\Python Prog\\fls_first"
 
 #Path to save yara rule on pc
 pathToYaraSave = "B:\Téléchargement\Yara"

@@ -1,30 +1,42 @@
 import os
 import re
 import sys
+import uuid
 import time
 import get_pe
 import datetime
 import subprocess
 import pathlib
 pathProg = pathlib.Path(__file__).parent.absolute()
-s = ""
+pathWork = ""
 for i in re.split(r"/|\\", str(pathProg))[:-1]:
-    s += i + "/"
-sys.path.append(s + "etc")
+    pathWork += i + "/"
+sys.path.append(pathWork + "etc")
 import allVariables
 import OnLinux.get_Fls_Strings
 import automatisation_yara
 
 
 def runningVms():
-    req = '%s list runningvms' % (allVariables.VBoxManage)
+    req = [allVariables.VBoxManage, "list", "runningvms"]
     return subprocess.run(req, capture_output=True)
 
 def readFile():
     f = open(str(pathProg) + "/tmp","r")
+    f1 = open(pathWork + "etc/blockProg.txt", "r")
+
     l = f.readline().rstrip()
+    l1 = f1.readlines()
+
     f.close()
-    return l
+    f1.close()
+
+    listTmp = [l.split(":")[0],l.split(":")[1].rstrip("\n")]
+
+    for line in l1:
+        if line.split(":")[0] == listTmp[1]:
+            return [listTmp[0], line.split(":")[1].rstrip("\n")]
+    return listTmp
 
 def create_rule(ext, hexa, product_version, l_app):
     app = ""
@@ -34,12 +46,16 @@ def create_rule(ext, hexa, product_version, l_app):
     date = datetime.datetime.now()
 
     ##Headers of yara rule
-    rules = "rule %s_%s {\n\tmeta:\n\t\t" % (app, ext[1])
+    if app:
+        rules = "rule %s_%s {\n\tmeta:\n\t\t" % (app, ext[1])
+    else:
+        rules = "rule %s_%s {\n\tmeta:\n\t\t" % (ext[0], ext[1])
 
     rules += 'description = "Auto gene for %s"\n\t\t' % (str(ext[0]))
     rules += 'author = "David Cruciani"\n\t\t'
     rules += 'date = "' + date.strftime('%Y-%m-%d') + '"\n\t\t'
-    rules += 'versionApp = "%s"\n\t' % (product_version)
+    rules += 'versionApp = "%s"\n\t\t' % (product_version)
+    rules += 'uuid = "%s"\n\t' % (str(uuid.uuid1()))
 
     rules += "strings: \n"
 
@@ -50,6 +66,12 @@ def create_rule(ext, hexa, product_version, l_app):
     rules += "\tcondition:\n\t\t$h\n}"
 
     return rules
+
+def runAuto(s):
+    pathS = os.path.join(allVariables.pathToStrings, s)
+    if os.path.isfile(pathS):
+        print(s)
+        automatisation_yara.inditif(pathS, ProductVersion, l_app)
 
 
 if __name__ == '__main__':
@@ -71,7 +93,7 @@ if __name__ == '__main__':
         if not allVariables.WindowsVM in res.stdout.decode():
             ## Start windows machine
             print("Windows Start")
-            p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
+            p = subprocess.Popen(request, stdout=subprocess.PIPE)
             (output, err) = p.communicate()
             p_status = p.wait()
 
@@ -94,7 +116,7 @@ if __name__ == '__main__':
         partage = allVariables.pathToConvert
         status = readFile()
 
-        convert_file = "%s%s_%s.img" %(partage, status.split(":")[1], status.split(":")[0])
+        convert_file = "%s%s_%s.img" %(partage, status[1], status[0])
 
         print("## Convertion ##")
         ############### Mettre plutot le nom de l'exe pour la machine linux pour faire un grep -i direct en fonction du nom
@@ -131,9 +153,9 @@ if __name__ == '__main__':
                     app_status = content.split(".")[0]
                     app = app_status.split("_")[0]
                     
-                    Get_Fls_Strings.fls(appchemin, cheminOut, app_status)
+                    OnLinux.get_Fls_Strings.fls(appchemin, allVariables.pathToStrings, app_status)
 
-                    Get_Fls_Strings.getStrings(appchemin, app, cheminOut, app_status)
+                    OnLinux.get_Fls_Strings.getStrings(appchemin, app, allVariables.pathToStrings, app_status)
 
         ## Suppresson of the current tmp file 
         os.remove(str(pathProg) + "/tmp")
@@ -151,9 +173,16 @@ if __name__ == '__main__':
             c = content.split(".")
             rule = create_rule(c, hexa, ProductVersion, l_app)
             print(rule)
-            automatisation_yara.save_rule(c[0], c[1], rule)
+            automatisation_yara.save_rule(c[0], c[1], rule, 3)
 
-    for content in os.listdir(allVariables.pathToStrings):
-        chemin = os.path.join(allVariables.pathToStrings, content)
-        if os.path.isfile(chemin):
-            automatisation_yara.inditif(chemin, ProductVersion, l_app)
+            s = "@%s@fls_install.tree" % (c[0])
+            runAuto(s)
+            
+            s = "@%s@fls_uninstall.tree" % (c[0])
+            runAuto(s)
+
+            s = "@%s@install.txt" % (c[0])
+            runAuto(s)
+
+            s = "@%s@uninstall.txt" % (c[0])
+            runAuto(s)

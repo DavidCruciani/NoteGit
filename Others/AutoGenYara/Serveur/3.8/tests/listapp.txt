@@ -1,4 +1,0 @@
-notepadplusplus:notepad++
-putty.install:putty
-googlechrome:chrome
-winrar:winrar

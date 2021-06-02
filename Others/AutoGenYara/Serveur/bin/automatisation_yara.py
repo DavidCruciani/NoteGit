@@ -1,7 +1,9 @@
+import os
 import re
+import sys
+import uuid
 import string
 import datetime
-import sys
 import pathlib
 p = pathlib.Path(__file__).parent.absolute()
 s = ""
@@ -22,12 +24,16 @@ def create_rule(ext, s, product_version, flag, l_app):
     date = datetime.datetime.now()
 
     ##Headers of yara rule
-    rules = "rule %s_%s {\n\tmeta:\n\t\t" % (app, ext[2])
+    if app:
+        rules = "rule %s_%s {\n\tmeta:\n\t\t" % (app, ext[2])
+    else:
+        rules = "rule %s_%s {\n\tmeta:\n\t\t" % (ext[1], ext[2])
 
     rules += 'description = "Auto gene for %s"\n\t\t' % (str(ext[1]))
     rules += 'author = "David Cruciani"\n\t\t'
     rules += 'date = "' + date.strftime('%Y-%m-%d') + '"\n\t\t'
-    rules += 'versionApp = "%s"\n\t' % (product_version)
+    rules += 'versionApp = "%s"\n\t\t' % (product_version)
+    rules += 'uuid = "%s"\n\t' % (str(uuid.uuid1()))
 
     rules += "strings: \n"
 
@@ -55,9 +61,19 @@ def create_rule(ext, s, product_version, flag, l_app):
     return rules
 
 ###Save of the rule on the disk
-def save_rule(ext1, ext2, rules):
-    yara_rule = open("%s/%s_%s.yar" % (allVariables.pathToYaraSave, ext1, ext2), "w")
+def save_rule(ext1, ext2, rules, flag):
+    chemin = None
+    if flag == 3:
+        chemin = os.path.join(allVariables.pathToYaraSave, "exe")
+    elif flag:
+        chemin = os.path.join(allVariables.pathToYaraSave, "tree")
+    else:
+        chemin = os.path.join(allVariables.pathToYaraSave, "txt")
 
+    if not os.path.isdir(chemin):
+        os.mkdir(chemin)
+
+    yara_rule = open("%s/%s_%s.yar" % (chemin, ext1, ext2), "w")
     yara_rule.write(rules)
     yara_rule.close()
 
@@ -70,7 +86,13 @@ def file_create_rule(chemin, file_version, l_app, flag = False):
 
     if allVariables.pathToFirstStringsMachine:
         first = open(allVariables.pathToFirstStringsMachine)
-        full = first.readlines()    
+        full = first.readlines() 
+        first.close()   
+
+    if allVariables.pathToFirstFls:
+        flsFile = open(allVariables.pathToFirstFls, "r")
+        fls = flsFile.readlines()
+        flsFile.close()
 
     ## Extract the term to search
     try:
@@ -83,7 +105,7 @@ def file_create_rule(chemin, file_version, l_app, flag = False):
     for i in range(0,len(file_strings)):
         ## the file is not a tree
         if not flag:
-            ## there's a file who contains some strings about a software on a virgin machine
+            ## there's a file who contains some strings about a software on a vanilla machine
             if allVariables.pathToFirstStringsMachine:
                 if ((not len(file_strings[i].split(" ")) > 5 and not len(file_strings[i]) > 30) \
                     or (len(file_strings[i].split(" ")) == 1 and not len(file_strings[i]) > 50)) \
@@ -97,9 +119,12 @@ def file_create_rule(chemin, file_version, l_app, flag = False):
 
                         s.append(file_strings[i])
         else:
-            if (ext[1] in file_strings[i] or ext[1].lower() in file_strings[i] or ext[1].upper() in file_strings[i]) and file_strings[i] not in s:
-
-                s.append(file_strings[i])
+            if allVariables.pathToFirstFls:
+                if ((ext[1] in file_strings[i] or ext[1].lower() in file_strings[i] or ext[1].upper() in file_strings[i]) and file_strings[i] not in s) and file_strings[i] not in fls:
+                    s.append(file_strings[i])
+            else:
+                if (ext[1] in file_strings[i] or ext[1].lower() in file_strings[i] or ext[1].upper() in file_strings[i]) and file_strings[i] not in s:
+                    s.append(file_strings[i])
 
     ## Suppression of the extension
     ext.append(str(ext[-1:][0].split(".")[0]))
@@ -112,7 +137,7 @@ def file_create_rule(chemin, file_version, l_app, flag = False):
     #exit(0)
 
     ###Save of the rule on the disk
-    save_rule(ext[1], ext[2], rules)
+    save_rule(ext[1], ext[2], rules, flag)
 
 
 

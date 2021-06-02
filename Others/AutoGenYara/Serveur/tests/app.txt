@@ -1,1 +1,1 @@
-notepadplusplus:notepad++
+7zip.install:7z
