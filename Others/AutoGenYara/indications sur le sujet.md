@@ -112,8 +112,23 @@ http://unxutils.sourceforge.net/
 - [ ] tester regles sur machine
 - [ ] faire diff entre install et new install 
 - [ ] garphe pour expliquer étape + faire
+- [ ] changer le nom de exe dans le cas de blockProg
 
 
 
 carton+ malwaredb
+
+
+
+
+
+github action pour tester le code 
+
+
+
+mettre un gros fichier pour ecraser ce qui a été supprimé sur le disque
+
+utiliser cpe pour identifier version et vulnerabilite
+
+
 
