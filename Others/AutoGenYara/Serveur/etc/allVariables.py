@@ -1,6 +1,6 @@
 #Path to the list that contains software to install: "nameOfPackage":"nameOfExe"
 #applist = "B:\\git\\NoteGit\\Others\\AutoGenYara\\Serveur\\tests\listapp.txt"
-applist = "B:\\git\\NoteGit\\Others\\AutoGenYara\\Serveur\\3.8\\tests\\app.txt"
+applist = "B:\\git\\NoteGit\\Others\\AutoGenYara\\Serveur\\tests\\app.txt"
 
 #Settings for server flask
 host = "0.0.0.0"

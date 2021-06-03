@@ -98,9 +98,9 @@ http://unxutils.sourceforge.net/
 
 
 
-
-
  VBoxManage guestproperty enumerate Windows10_2
+
+
 
 
 
@@ -111,14 +111,12 @@ http://unxutils.sourceforge.net/
 - [x] ajouter liste de base pour arborescence
 - [ ] tester regles sur machine
 - [ ] faire diff entre install et new install 
-- [ ] garphe pour expliquer étape + faire
-- [ ] changer le nom de exe dans le cas de blockProg
+- [x] garphe pour expliquer étape + faire
+- [x] changer le nom de exe dans le cas de blockProg
 
 
 
 carton+ malwaredb
-
-
 
 
 
