@@ -70,11 +70,11 @@ def create_rule(ext, hexa, product_version, l_app):
 
     return rules
 
-def runAuto(s):
+def runAuto(s, stringProg):
     pathS = os.path.join(allVariables.pathToStrings, s)
     if os.path.isfile(pathS):
         print(s)
-        automatisation_yara.inditif(pathS, ProductVersion, l_app)
+        automatisation_yara.inditif(pathS, ProductVersion, l_app, stringProg)
 
 
 if __name__ == '__main__':
@@ -96,11 +96,12 @@ if __name__ == '__main__':
     fapp.close()
 
     #Do a special strings-grep for better performance latter
+    stringProg = "string_prog_install"
     if not allVariables.LinuxVM:
         r = 'strings %s | grep -i -E "%s' % (allVariables.pathToFirstStringsMachine, list_app_string[0])
         for i in range(1, len(list_app_string)):
             r += " | " + list_app_string[i]
-        r += '" > string_prog_install'
+        r += '" > %s' % (stringProg)
         p = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
         (output, err) = p.communicate()
         p_status = p.wait()
@@ -206,13 +207,13 @@ if __name__ == '__main__':
             automatisation_yara.save_rule(c[0], c[1], rule, 3)
 
             s = "@%s@fls_install.tree" % (c[0])
-            runAuto(s)
+            runAuto(s, stringProg)
             
             s = "@%s@fls_uninstall.tree" % (c[0])
-            runAuto(s)
+            runAuto(s, stringProg)
 
             s = "@%s@install.txt" % (c[0])
-            runAuto(s)
+            runAuto(s, stringProg)
 
             s = "@%s@uninstall.txt" % (c[0])
-            runAuto(s)
+            runAuto(s, stringProg)

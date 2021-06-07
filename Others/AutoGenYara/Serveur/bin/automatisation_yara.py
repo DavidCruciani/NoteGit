@@ -75,13 +75,17 @@ def save_rule(ext1, ext2, rules, flag):
     yara_rule.close()
 
 
-def file_create_rule(chemin, file_version, l_app, flag = False):
+def file_create_rule(chemin, file_version, l_app, stringProg, flag = False):
     s = list()
 
     f = open(chemin, "r")
     file_strings = f.readlines()
 
-    if allVariables.pathToFirstStringsMachine:
+    if stringProg:
+        first = open(stringProg)
+        full = first.readlines() 
+        first.close()
+    elif allVariables.pathToFirstStringsMachine:
         first = open(allVariables.pathToFirstStringsMachine)
         full = first.readlines() 
         first.close()   
@@ -140,7 +144,7 @@ def file_create_rule(chemin, file_version, l_app, flag = False):
 
 
 
-def inditif(fichier, file_version, l_app):
+def inditif(fichier, file_version, l_app, stringProg):
     try:
         extension = fichier.split(".")[1]
     except:
@@ -149,6 +153,6 @@ def inditif(fichier, file_version, l_app):
 
     ## the file is a tree
     if fichier.split(".")[1] == "tree":
-        file_create_rule(fichier, file_version, l_app, True)
+        file_create_rule(fichier, file_version, l_app, stringProg, True)
     else:
-        file_create_rule(fichier, file_version, l_app)
+        file_create_rule(fichier, file_version, l_app, stringProg)
