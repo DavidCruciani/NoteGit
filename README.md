@@ -430,6 +430,10 @@ Contiens également 2 timestamps:
 
 5 Mai: Présentation de l'auto et reste juste a améliorer
 
+28 mai: uuid, test
+
+2 juin: test, cpe
+
 
 
 

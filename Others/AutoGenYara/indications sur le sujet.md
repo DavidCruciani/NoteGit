@@ -113,6 +113,7 @@ http://unxutils.sourceforge.net/
 - [ ] faire diff entre install et new install 
 - [x] garphe pour expliquer étape + faire
 - [x] changer le nom de exe dans le cas de blockProg
+- [ ] lister tous les fichier créé avec l'install et faire un md5 ou sha-1 de tous les fichiers: git status, untracked files
 
 
 

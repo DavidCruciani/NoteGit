@@ -78,18 +78,39 @@ def runAuto(s):
 
 
 if __name__ == '__main__':
+    list_app_string = list()
+    list_block = blockProg()
     fapp = open(allVariables.applist, "r")
     l_app = fapp.readlines()
     line_count = 0
     for line in l_app:
+        for block in list_block:
+            if line.split(":")[1].rstrip("\n") == block.split(":")[0]:
+                list_app_string.append(block.split(":")[1].rstrip("\n"))
+                break
+            else:
+                list_app_string.append(line.split(":")[1].rstrip("\n"))
+                break
         if line != "\n":
             line_count += 1
     fapp.close()
 
-    res = runningVms()
+    #Do a special strings-grep for better performance latter
+    if not allVariables.LinuxVM:
+        r = 'strings %s | grep -i -E "%s' % (allVariables.pathToFirstStringsMachine, list_app_string[0])
+        for i in range(1, len(list_app_string)):
+            r += " | " + list_app_string[i]
+        r += '" > string_prog_install'
+        p = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
+        (output, err) = p.communicate()
+        p_status = p.wait()
 
-    """for i in range(0,line_count*2):
-        print("Boucle n: %s, %s" % (i, l_app[i % len(l_app)].split(":")[1]))
+
+    res = runningVms()
+    j=0
+    for i in range(0, line_count*2):
+        loc = i - j
+        print("Boucle n: %s, %s" % (i, l_app[loc % len(l_app)].split(":")[1]))
         res = runningVms()
 
         request = [allVariables.VBoxManage, 'startvm', allVariables.WindowsVM]
@@ -160,10 +181,12 @@ if __name__ == '__main__':
 
                     OnLinux.get_Fls_Strings.getStrings(appchemin, app, allVariables.pathToStrings, app_status)
 
+        if i % 2 == 0:
+            j += 1
         ## Suppresson of the current tmp file 
         os.remove(str(pathProg) + "/tmp")
         ## Suppression of the current raw disk
-        os.remove(convert_file)"""
+        os.remove(convert_file)
 
 
     ## AutoGeneYara
