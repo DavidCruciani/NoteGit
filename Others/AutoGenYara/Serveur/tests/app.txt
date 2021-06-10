@@ -1,1 +1,1 @@
-7zip.install:7z
+putty.msi:putty,installer:msiexec

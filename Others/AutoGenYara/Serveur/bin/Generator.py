@@ -22,24 +22,36 @@ def blockProg():
     f1.close()
     return l1
 
+def writeFile(app, uninstall):
+    if uninstall:
+        tmp = open(allVariables.pathToInstaller + "\\uninstall.txt", "w")
+    else:
+        tmp = open(allVariables.pathToInstaller + "\\install.txt", "w")
+
+    appSplit = app.split(",")
+    app = appSplit[0].split(":")
+    installer = appSplit[1].split(":")
+
+    appstr = '{"%s":"%s"' % (app[0], app[1])
+    installerstr = '"%s":"%s"}' % (installer[0], installer[1].rstrip("\n"))
+
+    tmp.write(appstr + ", " + installerstr)
+    tmp.close()
+
+
 def runningVms():
     req = [allVariables.VBoxManage, "list", "runningvms"]
     return subprocess.run(req, capture_output=True)
 
-def readFile():
-    f = open(str(pathProg) + "/tmp","r")
+def nameApp(capp):
+    app = capp.split(",")[0].split(":")[1]
 
-    l = f.readline().rstrip()
     l1 = blockProg()
 
-    f.close()
-
-    listTmp = [l.split(":")[0],l.split(":")[1].rstrip("\n")]
-
     for line in l1:
-        if line.split(":")[0] == listTmp[1]:
-            return [listTmp[0], line.split(":")[1].rstrip("\n")]
-    return listTmp
+        if line.split(":")[0] == app:
+            return line.split(":")[1].rstrip("\n")
+    return app
 
 def create_rule(ext, hexa, product_version, l_app):
     app = ""
@@ -96,7 +108,7 @@ if __name__ == '__main__':
     fapp.close()
 
     #Do a special strings-grep for better performance latter
-    stringProg = "string_prog_install"
+    stringProg = ""
     if not allVariables.LinuxVM:
         r = 'strings %s | grep -i -E "%s' % (allVariables.pathToFirstStringsMachine, list_app_string[0])
         for i in range(1, len(list_app_string)):
@@ -109,9 +121,24 @@ if __name__ == '__main__':
 
     res = runningVms()
     j=0
+    uninstall = False
     for i in range(0, line_count*2):
         loc = i - j
-        print("Boucle n: %s, %s" % (i, l_app[loc % len(l_app)].split(":")[1]))
+        if uninstall:
+            print("Boucle n: %s, Uninstall: %s" % (i, l_app[loc % len(l_app)].split(":")[1].split(",")[0]))
+            try:
+                os.remove(allVariables.pathToInstaller + "\\install.txt")
+            except:
+                pass
+        else:
+            print("Boucle n: %s, Install: %s" % (i, l_app[loc % len(l_app)].split(":")[1].split(",")[0]))
+            try:
+                os.remove(allVariables.pathToInstaller + "\\uninstall.txt")
+            except:
+                pass
+
+        writeFile(l_app[loc], uninstall)
+
         res = runningVms()
 
         request = [allVariables.VBoxManage, 'startvm', allVariables.WindowsVM]
@@ -139,9 +166,12 @@ if __name__ == '__main__':
         qemu = allVariables.qemu
         vm = allVariables.pathToWindowsVM
         partage = allVariables.pathToConvert
-        status = readFile()
-
-        convert_file = "%s%s_%s.img" %(partage, status[1], status[0])
+        nApp = nameApp(l_app[loc])
+        
+        if uninstall:
+            convert_file = "%s%s_uninstall.img" %(partage, nApp)
+        else:
+            convert_file = "%s%s_install.img" %(partage, nApp)
 
         print("## Convertion ##")
         ############### Mettre plutot le nom de l'exe pour la machine linux pour faire un grep -i direct en fonction du nom
@@ -184,10 +214,12 @@ if __name__ == '__main__':
 
         if i % 2 == 0:
             j += 1
-        ## Suppresson of the current tmp file 
-        os.remove(str(pathProg) + "/tmp")
+            uninstall = True
+        else:
+            uninstall = False
+
         ## Suppression of the current raw disk
-        os.remove(convert_file)
+        #os.remove(convert_file)
 
 
     ## AutoGeneYara

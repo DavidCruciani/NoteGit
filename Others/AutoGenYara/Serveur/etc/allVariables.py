@@ -6,6 +6,8 @@ applist = "B:\\git\\NoteGit\\Others\\AutoGenYara\\Serveur\\tests\\app.txt"
 host = "0.0.0.0"
 port = "5000"
 
+pathToInstaller = "B:\VM\PartageVM\Installer"
+
 #Path to VBoxManage
 VBoxManage = "C:\\Program Files\Oracle\VirtualBox\VBoxManage.exe"
 

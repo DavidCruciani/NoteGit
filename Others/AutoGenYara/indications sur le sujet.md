@@ -131,3 +131,6 @@ utiliser cpe pour identifier version et vulnerabilite
 
 
 
+changer le client, fichier avec install/uninstall en nom et dedans écrire ce qu'il faut installer
+
+https://www.tarma.com/tools/uninstall
