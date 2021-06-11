@@ -2,25 +2,24 @@ rule putty_fls_install {
 	meta:
 		description = "Auto gene for putty"
 		author = "David Cruciani"
-		date = "2021-06-07"
+		date = "2021-06-11"
 		versionApp = "Release 0.75"
-		uuid = "29ca832d-a0a2-4f5c-999e-0d21ff59397d"
+		uuid = "316c24aa-a282-4dc6-a5e3-a9bbcf663d62"
 	strings: 
 		$s0 = /putty\.chm/
 		$s1 = /putty\.exe/
 		$s2 = /puttygen\.exe/
 		$s3 = /putty\.install\.0\.75/
-		$s4 = /putty\.install/
-		$s5 = /putty\.install\.nupkg/
-		$s6 = /putty\.install\.nuspec/
-		$s7 = /\{6D809377\-6AF0\-444B\-8957\-A3773F02200E\}\_PuTTY\_puttygen\_exe/
-		$s8 = /\{6D809377\-6AF0\-444B\-8957\-A3773F02200E\}\_PuTTY\_putty\_chm/
-		$s9 = /PUTTY\.EXE\-7D8FB982\.pf/
-		$s10 = /screen\.putty/
-		$s11 = /screen\.putty\-256color/
-		$s12 = /screen\.putty\-m1/
-		$s13 = /screen\.putty\-m1b/
-		$s14 = /screen\.putty\-m2/
+		$s4 = /\{6D809377\-6AF0\-444B\-8957\-A3773F02200E\}\_PuTTY\_puttygen\_exe/
+		$s5 = /\{6D809377\-6AF0\-444B\-8957\-A3773F02200E\}\_PuTTY\_putty\_chm/
+		$s6 = /putty\.install/
+		$s7 = /PUTTY\.EXE\-7D8FB982\.pf/
+		$s8 = /PUTTY\.EXE\-F8AEBD10\.pf/
+		$s9 = /screen\.putty/
+		$s10 = /screen\.putty\-256color/
+		$s11 = /screen\.putty\-m1/
+		$s12 = /screen\.putty\-m1b/
+		$s13 = /screen\.putty\-m2/
 	condition:
-		11 of ($s*)
+		10 of ($s*)
 }

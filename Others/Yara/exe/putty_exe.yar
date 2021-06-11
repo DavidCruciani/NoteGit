@@ -2,9 +2,9 @@ rule putty_exe {
 	meta:
 		description = "Auto gene for putty"
 		author = "David Cruciani"
-		date = "2021-06-07"
+		date = "2021-06-11"
 		versionApp = "Release 0.75"
-		uuid = "2148e622-e323-447a-8a7b-e890febb1a31"
+		uuid = "a8384edb-f567-43c1-a6cd-63c4abf552e5"
 	strings: 
 		$h = {4300 6f00 6d00 7000 6100 6e00 7900 4e00 
 6100 6d00 6500 0000 0000 5300 6900 6d00 
