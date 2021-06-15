@@ -1,4 +1,4 @@
-notepadplusplus:notepad++
-putty.install:putty
-googlechrome:chrome
-winrar:winrar
+chrome.exe:chrome,installer:exe
+putty.msi:putty,installer:msiexec
+readerdc.exe:AcroRd32,installer:exe
+winrar.exe:WinRAR,installer:exe
