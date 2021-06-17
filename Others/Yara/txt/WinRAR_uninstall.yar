@@ -2,9 +2,9 @@ rule WinRAR_uninstall {
 	meta:
 		description = "Auto gene for WinRAR"
 		author = "David Cruciani"
-		date = "2021-06-14"
+		date = "2021-06-17"
 		versionApp = "6.1.0"
-		uuid = "238ca05b-3bd9-4213-a0cd-ec08ae9824d8"
+		uuid = "a1fd6a9b-d148-4e8c-94dd-413c43cb42c8"
 	strings: 
 		$s0 = /WinRAR/
 		$s1 = /WinRAR\.lnk/

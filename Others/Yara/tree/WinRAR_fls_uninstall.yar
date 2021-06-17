@@ -2,9 +2,9 @@ rule WinRAR_fls_uninstall {
 	meta:
 		description = "Auto gene for WinRAR"
 		author = "David Cruciani"
-		date = "2021-06-14"
+		date = "2021-06-17"
 		versionApp = "6.1.0"
-		uuid = "10271b6f-264d-4024-bf24-5d8b8fc5f82e"
+		uuid = "96c64099-474a-4c32-af19-53a3cc97dd5e"
 	strings: 
 		$s0 = /winrar\.6\.01/
 		$s1 = /winrar\_books\[1\]\.png/

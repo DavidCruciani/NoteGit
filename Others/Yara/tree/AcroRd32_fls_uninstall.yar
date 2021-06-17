@@ -2,9 +2,9 @@ rule AcroRd32_fls_uninstall {
 	meta:
 		description = "Auto gene for AcroRd32"
 		author = "David Cruciani"
-		date = "2021-06-14"
+		date = "2021-06-17"
 		versionApp = "21.5.20048.436468"
-		uuid = "05ef7586-b8de-469f-848a-cd841a74966b"
+		uuid = "1711b520-66e4-49cb-826f-dae8b4271bfb"
 	strings: 
 		$s0 = /\{7C5A40EF\-A0FB\-4BFC\-874A\-C0F2E0B9FA8E\}\_Adobe\_Acrobat Reader DC\_Reader\_AcroRd32\_exe/
 		$s1 = /acrord32\_sbx/

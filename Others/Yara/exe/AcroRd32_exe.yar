@@ -2,9 +2,9 @@ rule AcroRd32_exe {
 	meta:
 		description = "Auto gene for AcroRd32"
 		author = "David Cruciani"
-		date = "2021-06-14"
+		date = "2021-06-17"
 		versionApp = "21.5.20048.436468"
-		uuid = "703ac8cd-bda3-4c51-ab2a-c7dffb39d588"
+		uuid = "aa2d5d7f-2f37-4c63-aa20-5e9988a1b90a"
 	strings: 
 		$h = {4300 6f00 6d00 7000 6100 6e00 7900 4e00 
 6100 6d00 6500 0000 0000 4100 6400 6f00 

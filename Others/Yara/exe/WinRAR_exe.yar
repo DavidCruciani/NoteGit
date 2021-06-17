@@ -2,9 +2,9 @@ rule WinRAR_exe {
 	meta:
 		description = "Auto gene for WinRAR"
 		author = "David Cruciani"
-		date = "2021-06-14"
+		date = "2021-06-17"
 		versionApp = "6.1.0"
-		uuid = "f74ef249-6a9e-4cfc-90ae-83f59deb1c1b"
+		uuid = "d3748227-056e-4124-ad01-12cee3466023"
 	strings: 
 		$h = {4300 6f00 6d00 7000 6100 6e00 7900 4e00 
 6100 6d00 6500 0000 0000 4100 6c00 6500 

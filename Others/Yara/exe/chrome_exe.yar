@@ -2,9 +2,9 @@ rule chrome_exe {
 	meta:
 		description = "Auto gene for chrome"
 		author = "David Cruciani"
-		date = "2021-06-14"
-		versionApp = "91.0.4472.101"
-		uuid = "3dc18684-0cc6-4f78-b217-78cd7afe07f1"
+		date = "2021-06-17"
+		versionApp = "91.0.4472.106"
+		uuid = "7b406a16-74ed-4079-a50c-99a1e950ec06"
 	strings: 
 		$h = {4300 6f00 6d00 7000 6100 6e00 7900 4e00 
 6100 6d00 6500 0000 0000 4700 6f00 6f00 
