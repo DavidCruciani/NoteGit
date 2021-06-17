@@ -70,7 +70,22 @@ et ensuite le monter:
 
 
 
+### Git Status
 
+To list only untracked files
+
+```
+git ls-files --others --exclude-standard
+```
+
+
+
+### Compare 2 tree folder
+
+```
+find directory1 -type d -printf "%P\n" | sort > file1
+find directory2 -type d -printf "%P\n" | sort | diff - file1
+```
 
 ### Méthode
 
