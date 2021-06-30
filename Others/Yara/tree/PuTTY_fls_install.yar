@@ -4,24 +4,24 @@ rule PuTTY_fls_install {
 		author = "David Cruciani"
 		date = "2021-06-30"
 		versionApp = "Release 0.75"
-		uuid = "78055541-302b-43cc-b457-083222ca4bb0"
+		uuid = "c18f90a5-2692-42f0-a462-b3e01ae019cb"
 	strings: 
-		$s0 = /putty/
+		$s0 = /PuTTY/
 		$s1 = /putty\.chm/
 		$s2 = /putty\.exe/
 		$s3 = /puttygen\.exe/
-		$s4 = /putty \(64\-bit\)/
-		$s5 = /putty manual\.lnk/
-		$s6 = /putty web site\.lnk/
-		$s7 = /putty\.lnk/
-		$s8 = /puttygen\.lnk/
-		$s9 = /simontatham\_putty/
-		$s10 = /\{6d809377\-6af0\-444b\-8957\-a3773f02200e\}\_putty\_pageant\_exe/
-		$s11 = /\{6d809377\-6af0\-444b\-8957\-a3773f02200e\}\_putty\_psftp\_exe/
-		$s12 = /\{6d809377\-6af0\-444b\-8957\-a3773f02200e\}\_putty\_puttygen\_exe/
-		$s13 = /\{6d809377\-6af0\-444b\-8957\-a3773f02200e\}\_putty\_putty\_chm/
-		$s14 = /\{6d809377\-6af0\-444b\-8957\-a3773f02200e\}\_putty\_website\_url/
-		$s15 = /putty\.exe\-7d8fb982\.pf/
+		$s4 = /PuTTY \(64\-bit\)/
+		$s5 = /PuTTY Manual\.lnk/
+		$s6 = /PuTTY Web Site\.lnk/
+		$s7 = /PuTTY\.lnk/
+		$s8 = /PuTTYgen\.lnk/
+		$s9 = /SimonTatham\_PuTTY/
+		$s10 = /\{6D809377\-6AF0\-444B\-8957\-A3773F02200E\}\_PuTTY\_pageant\_exe/
+		$s11 = /\{6D809377\-6AF0\-444B\-8957\-A3773F02200E\}\_PuTTY\_psftp\_exe/
+		$s12 = /\{6D809377\-6AF0\-444B\-8957\-A3773F02200E\}\_PuTTY\_puttygen\_exe/
+		$s13 = /\{6D809377\-6AF0\-444B\-8957\-A3773F02200E\}\_PuTTY\_putty\_chm/
+		$s14 = /\{6D809377\-6AF0\-444B\-8957\-A3773F02200E\}\_PuTTY\_website\_url/
+		$s15 = /PUTTY\.EXE\-7D8FB982\.pf/
 	condition:
 		12 of ($s*)
 }
