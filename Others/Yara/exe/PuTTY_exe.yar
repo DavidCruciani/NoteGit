@@ -1,10 +1,10 @@
-rule putty_exe {
+rule PuTTY_exe {
 	meta:
-		description = "Auto gene for putty"
+		description = "Auto gene for PuTTY"
 		author = "David Cruciani"
-		date = "2021-06-17"
+		date = "2021-06-30"
 		versionApp = "Release 0.75"
-		uuid = "644fb11c-2b93-439b-b112-54a5e3bc9087"
+		uuid = "e999d83b-0deb-459d-9154-dc24e4dc903d"
 	strings: 
 		$h = {4300 6f00 6d00 7000 6100 6e00 7900 4e00 
 6100 6d00 6500 0000 0000 5300 6900 6d00 
