@@ -110,23 +110,23 @@ def file_create_rule(chemin, file_version, l_app, stringProg, flag = False):
             if allVariables.pathToFirstStringsMachine:
                 if ((not len(file_strings[i].split(" ")) > 5 and not len(file_strings[i]) > 30) \
                     or (len(file_strings[i].split(" ")) == 1 and not len(file_strings[i]) > 50)) \
-                    and ((ext[1] in file_strings[i] or ext[1].lower() in file_strings[i]) and file_strings[i] not in s) and file_strings[i] not in full:
+                    and ((ext[1].lower() in file_strings[i].lower()) and file_strings[i].lower() not in s) and file_strings[i] not in full:
 
-                        s.append(file_strings[i])
+                        s.append(file_strings[i].lower())
             else:
                 if ((not len(file_strings[i].split(" ")) > 5 and not len(file_strings[i]) > 30) \
                     or (len(file_strings[i].split(" ")) == 1 and not len(file_strings[i]) > 50)) \
-                    and (ext[1] in file_strings[i] or ext[1].lower() in file_strings[i]) and file_strings[i] not in s:
+                    and (ext[1].lower() in file_strings[i].lower()) and file_strings[i].lower() not in s:
 
-                        s.append(file_strings[i])
+                        s.append(file_strings[i].lower())
         else:
             f_str = str(file_strings[i]).split("\t")[1]
             if allVariables.pathToFirstFls:
-                if ((ext[1] in f_str or ext[1].lower() in f_str or ext[1].upper() in f_str) and f_str not in s) and f_str not in fls:
-                    s.append(f_str)
+                if ((ext[1].lower() in f_str.lower()) and f_str.lower() not in s) and f_str not in fls:
+                    s.append(f_str.lower())
             else:
-                if (ext[1] in f_str or ext[1].lower() in f_str or ext[1].upper() in f_str) and f_str not in s:
-                    s.append(f_str)
+                if (ext[1].lower() in f_str.lower()) and f_str.lower() not in s:
+                    s.append(f_str.lower())
 
     ## Suppression of the extension
     ext.append(str(ext[-1:][0].split(".")[0]))

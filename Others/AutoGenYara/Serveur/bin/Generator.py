@@ -109,7 +109,7 @@ if __name__ == '__main__':
 
     #Do a special strings-grep for better performance latter
     stringProg = ""
-    if not allVariables.LinuxVM:
+    """if not allVariables.LinuxVM:
         r = 'strings %s | grep -i -E "%s' % (allVariables.pathToFirstStringsMachine, list_app_string[0].split(",")[0])
         for i in range(1, len(list_app_string)):
             r += " | " + list_app_string[i].split(",")[0]
@@ -220,7 +220,7 @@ if __name__ == '__main__':
             uninstall = False
 
         ## Suppression of the current raw disk
-        #os.remove(convert_file)
+        #os.remove(convert_file)"""
 
 
     ## AutoGeneYara

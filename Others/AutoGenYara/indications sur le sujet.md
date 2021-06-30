@@ -134,3 +134,32 @@ utiliser cpe pour identifier version et vulnerabilite
 changer le client, fichier avec install/uninstall en nom et dedans écrire ce qu'il faut installer
 
 https://www.tarma.com/tools/uninstall
+
+
+
+-----------
+
+refaire une machine vraiment de base
+
+yara -d pour passer parametre
+
+calculer les paramtètres optimales
+
+
+
+instaler putty faire conversion faire 5 reboot
+
+insatller soft a chaque reboot
+
+regadrer quand match plu
+
+https://docs.microsoft.com/en-us/sysinternals/downloads/sync
+
+insatller sync, insatller soft, désinstall et lancer sync
+
+
+
+Titre : improving forensic triage
+
+"Pour trier mes merde"
+

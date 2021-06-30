@@ -83,8 +83,8 @@ git ls-files --others --exclude-standard
 ### Compare 2 tree folder
 
 ```
-find directory1 -type d -printf "%P\n" | sort > file1
-find directory2 -type d -printf "%P\n" | sort | diff - file1
+find d1 -type d -printf "%P\n" | sort > f1
+find d2 -type d -printf "%P\n" | sort | diff -u - f1 > diff_d1_d2
 ```
 
 ### Méthode
@@ -428,6 +428,12 @@ https://tmuxcheatsheet.com/
 list directory only:
 
 `ls -l -d */`
+
+Delete all files in a directory except filename
+
+```
+rm -v !("filename")
+```
 
 ##### python
 
