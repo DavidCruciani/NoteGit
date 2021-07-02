@@ -435,6 +435,24 @@ Delete all files in a directory except filename
 rm -v !("filename")
 ```
 
+Size of a specific folder 
+
+```
+du -sh /path/to/folder
+```
+
+
+
+##### sed
+
+delete line that match pattern `u` in file 
+
+```
+sed '/u/d' file
+```
+
+
+
 ##### python
 
 Creation d'environement python:
