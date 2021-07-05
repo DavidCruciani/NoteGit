@@ -29,7 +29,7 @@ def create_rule(ext, s, product_version, l_app):
     else:
         rules = "rule %s_%s {\n\tmeta:\n\t\t" % (ext[1], ext[2])
 
-    rules += 'description = "Auto gene for %s"\n\t\t' % (str(ext[1]))
+    rules += 'description = "Auto generation for %s"\n\t\t' % (str(ext[1]))
     rules += 'author = "David Cruciani"\n\t\t'
     rules += 'date = "' + date.strftime('%Y-%m-%d') + '"\n\t\t'
     rules += 'versionApp = "%s"\n\t\t' % (product_version)
@@ -58,14 +58,10 @@ def create_rule(ext, s, product_version, l_app):
     return rules
 
 ###Save of the rule on the disk
-def save_rule(ext1, ext2, rules, flag):
-    chemin = None
-    if flag == 3:
-        chemin = os.path.join(allVariables.pathToYaraSave, "exe")
-    elif flag:
+def save_rule(ext1, ext2, rules, flag = False):
+    chemin = os.path.join(allVariables.pathToYaraSave, ext1)
+    if flag:
         chemin = os.path.join(allVariables.pathToYaraSave, "tree")
-    else:
-        chemin = os.path.join(allVariables.pathToYaraSave, "txt")
 
     if not os.path.isdir(chemin):
         os.mkdir(chemin)

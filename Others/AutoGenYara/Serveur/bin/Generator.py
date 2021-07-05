@@ -66,7 +66,7 @@ def create_rule(ext, hexa, product_version, l_app):
     else:
         rules = "rule %s_%s {\n\tmeta:\n\t\t" % (ext[0], ext[1])
 
-    rules += 'description = "Auto gene for %s"\n\t\t' % (str(ext[0]))
+    rules += 'description = "Auto generation for %s"\n\t\t' % (str(ext[0]))
     rules += 'author = "David Cruciani"\n\t\t'
     rules += 'date = "' + date.strftime('%Y-%m-%d') + '"\n\t\t'
     rules += 'versionApp = "%s"\n\t\t' % (product_version)
@@ -109,7 +109,7 @@ if __name__ == '__main__':
 
     #Do a special strings-grep for better performance latter
     stringProg = ""
-    """if not allVariables.LinuxVM:
+    if not allVariables.LinuxVM:
         r = 'strings %s | grep -i -E "%s' % (allVariables.pathToFirstStringsMachine, list_app_string[0].split(",")[0])
         for i in range(1, len(list_app_string)):
             r += " | " + list_app_string[i].split(",")[0]
@@ -126,13 +126,13 @@ if __name__ == '__main__':
     for i in range(0, line_count*2):
         loc = i - j
         if uninstall:
-            print("Boucle n: %s, Uninstall: %s" % (i, l_app[loc % len(l_app)].split(":")[1].split(",")[0]))
+            print("\nBoucle n: %s, Uninstall: %s" % (i, l_app[loc % len(l_app)].split(":")[1].split(",")[0]))
             try:
                 os.remove(allVariables.pathToInstaller + "\\install.txt")
             except:
                 pass
         else:
-            print("Boucle n: %s, Install: %s" % (i, l_app[loc % len(l_app)].split(":")[1].split(",")[0]))
+            print("\nBoucle n: %s, Install: %s" % (i, l_app[loc % len(l_app)].split(":")[1].split(",")[0]))
             try:
                 os.remove(allVariables.pathToInstaller + "\\uninstall.txt")
             except:
@@ -142,13 +142,15 @@ if __name__ == '__main__':
 
         res = runningVms()
 
-        request = [allVariables.VBoxManage, 'startvm', allVariables.WindowsVM]
+        request = [allVariables.VBoxManage, 'startvm', allVariables.WindowsVM, '--type', 'headless']
         if not allVariables.WindowsVM in res.stdout.decode():
             ## Start windows machine
-            print("Windows Start")
+            print("[+] Windows Start")
             p = subprocess.Popen(request, stdout=subprocess.PIPE)
             (output, err) = p.communicate()
             p_status = p.wait()
+        else:
+            print("[+] Windows Running")
 
         ## wait windows machine to shutdown
         res = runningVms()
@@ -160,7 +162,7 @@ if __name__ == '__main__':
             print("\rTime spent: %s min" % (cptime), end="")
             res = runningVms()
 
-        print("\nWindows stop\n")
+        print("\n[+] Windows stop\n")
 
 
         ## Convert windows machine into raw format
@@ -177,7 +179,7 @@ if __name__ == '__main__':
         print("## Convertion ##")
         ############### Mettre plutot le nom de l'exe pour la machine linux pour faire un grep -i direct en fonction du nom
         res = subprocess.call([qemu, "convert", "-f", "vmdk", "-O", "raw", vm, convert_file])
-        print("ok\n")
+        print("[+] Convertion Finish\n")
 
         
         if allVariables.LinuxVM:
@@ -186,10 +188,12 @@ if __name__ == '__main__':
             request = [allVariables.VBoxManage, 'startvm', allVariables.LinuxVM]
             if not allVariables.LinuxVM in res.stdout.decode():
                 ## Start ubuntu machine
-                print("Ubuntu Start")
+                print("[+] Ubuntu Start")
                 p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
                 (output, err) = p.communicate()
                 p_status = p.wait()
+            else:
+                print("[+] Ubuntu Running")
 
 
             res = runningVms()
@@ -201,7 +205,7 @@ if __name__ == '__main__':
                 print("\rTime spent: %s min" % (cptime), end="")
                 res = runningVms()
 
-            print("\nUbuntu stop")
+            print("\n[+] Ubuntu stop")
         else:
             for content in os.listdir(allVariables.pathToConvert):
                 appchemin = os.path.join(allVariables.pathToConvert, content)
@@ -220,7 +224,7 @@ if __name__ == '__main__':
             uninstall = False
 
         ## Suppression of the current raw disk
-        #os.remove(convert_file)"""
+        os.remove(convert_file)
 
 
     ## AutoGeneYara
@@ -237,7 +241,7 @@ if __name__ == '__main__':
             (hexa, ProductVersion) = get_pe.pe_yara(chemin)
             rule = create_rule(c, hexa, ProductVersion, l_app)
             print(rule)
-            automatisation_yara.save_rule(c[0], c[1], rule, 3)
+            automatisation_yara.save_rule(c[0], c[1], rule)
 
             s = "@%s@fls_install.tree" % (c[0])
             runAuto(s, stringProg)

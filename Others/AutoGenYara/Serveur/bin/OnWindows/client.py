@@ -48,7 +48,7 @@ if __name__ == '__main__':
                 
                 print("uninstall finish")
             else:
-                print("inst")
+                print("[*] Installation")
                 #exit(0)
                 request = appManager(True, dic[key[1]], key[0])
                 print(request)
@@ -56,8 +56,9 @@ if __name__ == '__main__':
                 (output, err) = p.communicate()
                 p_status = p.wait()
                 
-                print("choco install: " + output.decode())
-                print("[*] install finish\n")
+                print("[+] Output installation: " + output.decode())
+
+                print("[*] Install finish\n")
                 
                 # get the past to the app
                 print("[+] Path to exe search...")
