@@ -61,7 +61,7 @@ def create_rule(ext, s, product_version, l_app):
 def save_rule(ext1, ext2, rules, flag = False):
     chemin = os.path.join(allVariables.pathToYaraSave, ext1)
     if flag:
-        chemin = os.path.join(allVariables.pathToYaraSave, "tree")
+        chemin = os.path.join(chemin, "tree")
 
     if not os.path.isdir(chemin):
         os.mkdir(chemin)

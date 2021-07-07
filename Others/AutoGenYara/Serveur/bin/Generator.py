@@ -24,9 +24,9 @@ def blockProg():
 
 def writeFile(app, uninstall):
     if uninstall:
-        tmp = open(allVariables.pathToInstaller + "\\uninstall.txt", "w")
+        tmp = open(allVariables.pathToInstaller + "/uninstall.txt", "w")
     else:
-        tmp = open(allVariables.pathToInstaller + "\\install.txt", "w")
+        tmp = open(allVariables.pathToInstaller + "/install.txt", "w")
 
     appSplit = app.split(",")
     app = appSplit[0].split(":")
@@ -128,13 +128,13 @@ if __name__ == '__main__':
         if uninstall:
             print("\nBoucle n: %s, Uninstall: %s" % (i, l_app[loc % len(l_app)].split(":")[1].split(",")[0]))
             try:
-                os.remove(allVariables.pathToInstaller + "\\install.txt")
+                os.remove(allVariables.pathToInstaller + "/install.txt")
             except:
                 pass
         else:
             print("\nBoucle n: %s, Install: %s" % (i, l_app[loc % len(l_app)].split(":")[1].split(",")[0]))
             try:
-                os.remove(allVariables.pathToInstaller + "\\uninstall.txt")
+                os.remove(allVariables.pathToInstaller + "/uninstall.txt")
             except:
                 pass
 
