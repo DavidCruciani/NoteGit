@@ -53,7 +53,8 @@ def create_rule(ext, s, product_version, l_app):
 
     ##End of yara rule
     ## 1.25 is a coefficient to match the rule, which leaves a margin of error
-    rules += "\tcondition:\n\t\t%s of ($s*)\n}" % (str(int(r/1.25)))
+    #rules += "\tcondition:\n\t\t%s of ($s*)\n}" % (str(int(r/1.25)))
+    rules += "\tcondition:\n\t\t ext_var of ($s*)\n}" 
 
     return rules
 
