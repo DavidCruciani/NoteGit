@@ -179,7 +179,7 @@ if __name__ == '__main__':
         print("## Convertion ##")
         ############### Mettre plutot le nom de l'exe pour la machine linux pour faire un grep -i direct en fonction du nom
         res = subprocess.call([qemu, "convert", "-f", "vmdk", "-O", "raw", vm, convert_file])
-        print("[+] Convertion Finish\n")
+        print("## Convertion Finish ##\n")
 
         
         if allVariables.LinuxVM:

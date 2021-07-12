@@ -91,7 +91,7 @@ https://docs.microsoft.com/en-us/sysinternals/downloads/sync
 
 - [x] ajouter uuid
 - [x] blacklist
-- [ ] ExtVar dans condition
+- [x] ExtVar dans condition
 - [ ] Macro pour obtenir paramètre idéale
 
 
@@ -102,16 +102,15 @@ https://docs.microsoft.com/en-us/sysinternals/downloads/sync
 - [x] ajouter liste de base pour arborescence
 - [ ] Code pour copier gros fichier pour écraser disque
 - [ ] Ajout de Sync
+- [ ] Ajout de AsA
 
 
 
 #### Machine
 
-- [ ] Parse output Json ASA
-- [ ] AsA putty install <> AsA putty install run
+- [x] Parse output Json ASA
+- [x] AsA putty install <> AsA putty install run
 - [ ] Deployer et tester Whids 
-- [ ] faire diff entre install et new install 
-- [ ] lister tous les fichier créé avec l'install et faire un md5 ou sha-1 de tous les fichiers
 
  
 
