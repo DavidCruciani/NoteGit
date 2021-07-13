@@ -14,9 +14,9 @@ def appManager(status, installer, app):
             return "choco uninstall -y %s" % (app)
     elif installer == "msiexec":
         if status:
-            return "msiexec /i %s%s /qn" % (VarClient.pathToInstaller + "/installer/", app)
+            return "msiexec /i %s%s /qn" % (VarClient.pathToInstaller + "\\installer\\", app)
         else:
-            return "msiexec /x %s%s /qn" % (VarClient.pathToInstaller + "/installer/", app)
+            return "msiexec /x %s%s /qn" % (VarClient.pathToInstaller + "\\installer\\", app)
     elif installer == "exe":
         if status:
             return "%s%s /s /v\"/qn\"" % (VarClient.pathToInstaller, app)
@@ -30,16 +30,22 @@ def sync():
         p = subprocess.Popen(request, stdout=subprocess.PIPE)
         (output, err) = p.communicate()
         p_status = p.wait()
-        print(output)
+        try:
+            print(output.decode())
+        except:
+            pass
 
 def copyBigFile():
     if VarClient.pathToCopy:
         print("[+] Copy of big file")
-        request = ["copy", VarClient.pathToCopy, "C:/Users/Administrateur/Downloads"]
-        p = subprocess.Popen(request, stdout=subprocess.PIPE)
+        request = ["copy", VarClient.pathToCopy, "C:\\Users\\Administrateur\\Downloads"]
+        p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
         (output, err) = p.communicate()
         p_status = p.wait()
-        print(output)
+        try:
+            print(output.decode())
+        except:
+            pass
     
 
 if __name__ == '__main__':
@@ -79,7 +85,8 @@ if __name__ == '__main__':
                 (output, err) = p.communicate()
                 p_status = p.wait()
                 
-                print("[+] Output installation: " + output.decode())
+                if dic[key[1]] == "choco":
+                    print("[+] Output installation: " + output.decode())
 
                 print("[*] Install finish\n")
                 
