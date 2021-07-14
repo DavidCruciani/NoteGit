@@ -15,3 +15,6 @@ pathToCopy = "\\\VBOXSVR\\PartageVM\\string_first"
 
 #
 pathToAsa = "C:/Users/Administrateur/Downloads/ASA_win_2.3.146-beta/Asa.exe"
+
+#
+pathToAsaReport = "\\\VBOXSVR\\PartageVM\\AsaReport\\"

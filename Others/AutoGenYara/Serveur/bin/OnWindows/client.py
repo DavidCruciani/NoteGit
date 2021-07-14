@@ -1,5 +1,6 @@
 import os
 import ast
+import glob
 import time
 import psutil
 import VarClient
@@ -23,29 +24,58 @@ def appManager(status, installer, app):
         else:
             return "%s %s" % (VarClient.pathToUninstaller, app)
 
+
+def callSubprocess(request, shellUse = False):
+    if shellUse:
+        p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
+        (output, err) = p.communicate()
+        p_status = p.wait()
+    else:
+        p = subprocess.Popen(request, stdout=subprocess.PIPE)
+        (output, err) = p.communicate()
+        p_status = p.wait()
+
+    try:
+        print(output.decode())
+    except:
+        pass
+
+
 def sync():
     if VarClient.pathToSync:
         print("[+] Sync")
         request = [VarClient.pathToSync, "c"]
-        p = subprocess.Popen(request, stdout=subprocess.PIPE)
-        (output, err) = p.communicate()
-        p_status = p.wait()
-        try:
-            print(output.decode())
-        except:
-            pass
+        callSubprocess(request)
 
 def copyBigFile():
     if VarClient.pathToCopy:
         print("[+] Copy of big file")
         request = ["copy", VarClient.pathToCopy, "C:\\Users\\Administrateur\\Downloads"]
-        p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
-        (output, err) = p.communicate()
-        p_status = p.wait()
+        callSubprocess(request, True)
+
+def AsACollect():
+    print("[+] AsA collect")
+    request = [VarClient.pathToAsa, "collect", "-a"]
+    callSubprocess(request)
+
+def AsAExport(app):
+    print("[+] AsA export")
+    request = [VarClient.pathToAsa, "export-collect"]
+    callSubprocess(request)
+
+    print("[+] Move AsA report")
+
+    request = ["move", ".\\2021*", VarClient.pathToAsaReport + app.split(".")[0] + "_install_Asa_compare.json"]
+    callSubprocess(request, True)
+
+    print("[+] Delete Asa Sqlite File")
+    files = glob.glob('.\\asa.sqlite*', recursive=True)
+    for f in files:
         try:
-            print(output.decode())
-        except:
-            pass
+            os.remove(f)
+        except OSError as e:
+            print("Error: %s : %s" % (f, e.strerror))
+
     
 
 if __name__ == '__main__':
@@ -64,9 +94,7 @@ if __name__ == '__main__':
                 request = appManager(False, dic[key[1]], key[0])
                 print(request)
                 
-                p = subprocess.Popen(request, stdout=subprocess.PIPE)
-                (output, err) = p.communicate()
-                p_status = p.wait()
+                callSubprocess(request)
 
                 if "exe" == dic[key[1]]:
                     input("\nEnter when finish")
@@ -79,6 +107,9 @@ if __name__ == '__main__':
             else:
                 print("[*] Installation")
                 #exit(0)
+
+                AsACollect()
+
                 request = appManager(True, dic[key[1]], key[0])
                 print(request)
                 p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
@@ -105,9 +136,7 @@ if __name__ == '__main__':
                 print("[+] Copy exe...")
                 r = 'copy "' + path + '"' + VarClient.pathToExeExtract
                 
-                p = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
-                (output, err) = p.communicate()
-                p_status = p.wait()
+                callSubprocess(r, True)
                 
                 
                 print("[+] Run exe...")
@@ -128,5 +157,8 @@ if __name__ == '__main__':
                                 subprocess.check_output("Taskkill /PID %d /F /T" % child_pid.pid)
                             except:
                                 pass
-                    
+                
+                AsACollect()
+                AsAExport(key[0])
+
     os.system("shutdown /s /t 10")

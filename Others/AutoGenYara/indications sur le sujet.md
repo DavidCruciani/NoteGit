@@ -100,8 +100,8 @@ https://docs.microsoft.com/en-us/sysinternals/downloads/sync
 
 - [x] changer le nom de exe dans le cas de blockProg
 - [x] ajouter liste de base pour arborescence
-- [ ] Code pour copier gros fichier pour écraser disque
-- [ ] Ajout de Sync
+- [x] Code pour copier gros fichier pour écraser disque
+- [x] Ajout de Sync
 - [ ] Ajout de AsA
 
 
