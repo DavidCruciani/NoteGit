@@ -6,7 +6,9 @@ import psutil
 import VarClient
 import subprocess
 
-# put client.exe in the startup folder, windows+r and shell:startup
+# put client.exe in the startup folder, "Windows" + "r" and "shell:startup"
+
+## Prepare the request depending on the installer
 def appManager(status, installer, app):
     if installer == "choco":
         if status:
@@ -40,41 +42,50 @@ def callSubprocess(request, shellUse = False):
     except:
         pass
 
-
+## Run Sync to flush filesystem data
 def sync():
     if VarClient.pathToSync:
         print("[+] Sync")
         request = [VarClient.pathToSync, "c"]
         callSubprocess(request)
 
+## Copy a big file on the disk to erase residual data
 def copyBigFile():
     if VarClient.pathToCopy:
         print("[+] Copy of big file")
         request = ["copy", VarClient.pathToCopy, "C:\\Users\\Administrateur\\Downloads"]
         callSubprocess(request, True)
 
+## Remove big file for an other installation
+def removeBigFile():
+    if os.path.isfile("C:\\Users\\Administrateur\\Downloads\\string_first"):
+        os.remove("C:\\Users\\Administrateur\\Downloads\\string_first")
+
+## Run an asa collect for a later compare
 def AsACollect():
-    print("[+] AsA collect")
-    request = [VarClient.pathToAsa, "collect", "-a"]
-    callSubprocess(request)
+    if VarClient.pathToAsa:
+        print("[+] AsA collect")
+        request = [VarClient.pathToAsa, "collect", "-a"]
+        callSubprocess(request)
 
+## Compare two asa collect and move the result to the share folder
 def AsAExport(app):
-    print("[+] AsA export")
-    request = [VarClient.pathToAsa, "export-collect"]
-    callSubprocess(request)
+    if VarClient.pathToAsa:
+        print("[+] AsA export")
+        request = [VarClient.pathToAsa, "export-collect"]
+        callSubprocess(request)
 
-    print("[+] Move AsA report")
+        print("[+] Move AsA report")
+        request = ["move", ".\\2021*", VarClient.pathToAsaReport + app.split(".")[0] + "_install_Asa_compare.json"]
+        callSubprocess(request, True)
 
-    request = ["move", ".\\2021*", VarClient.pathToAsaReport + app.split(".")[0] + "_install_Asa_compare.json"]
-    callSubprocess(request, True)
-
-    print("[+] Delete Asa Sqlite File")
-    files = glob.glob('.\\asa.sqlite*', recursive=True)
-    for f in files:
-        try:
-            os.remove(f)
-        except OSError as e:
-            print("Error: %s : %s" % (f, e.strerror))
+        print("[+] Delete Asa Sqlite File")
+        files = glob.glob('.\\asa.sqlite*', recursive=True)
+        for f in files:
+            try:
+                os.remove(f)
+            except OSError as e:
+                print("Error: %s : %s" % (f, e.strerror))
 
     
 
@@ -85,6 +96,7 @@ if __name__ == '__main__':
             f = open(chemin, "r")
             l = f.readline()
             f.close()
+            
             dic = ast.literal_eval(l)
             key = list(dic.keys())
 
@@ -108,6 +120,7 @@ if __name__ == '__main__':
                 print("[*] Installation")
                 #exit(0)
 
+                removeBigFile()
                 AsACollect()
 
                 request = appManager(True, dic[key[1]], key[0])
@@ -138,9 +151,8 @@ if __name__ == '__main__':
                 
                 callSubprocess(r, True)
                 
-                
+                # run exe to have more artefacts
                 print("[+] Run exe...")
-              
                 p = subprocess.Popen(path, stdout=subprocess.PIPE, shell=True)
 
                 time.sleep(10)

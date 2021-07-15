@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import json
 import uuid
 import time
 import get_pe
@@ -13,8 +14,10 @@ for i in re.split(r"/|\\", str(pathProg))[:-1]:
     pathWork += i + "/"
 sys.path.append(pathWork + "etc")
 import allVariables
-import OnLinux.get_Fls_Strings
+import OnWindows.VarClient
 import automatisation_yara
+import OnLinux.get_Fls_Strings
+
 
 def blockProg():
     f1 = open(pathWork + "etc/blockProg.txt", "r")
@@ -87,6 +90,40 @@ def runAuto(s, stringProg):
     if os.path.isfile(pathS):
         print(s)
         automatisation_yara.inditif(pathS, ProductVersion, l_app, stringProg)
+
+def parseAsa(asaReport, currentApp):
+    with open(asaReport, "r") as asa_file:
+        jsonParse = json.loads(asa_file.read())
+
+    with open(pathWork + "etc/blocklistASA.txt", "r") as blockAsa:
+        blocklistASA = blockAsa.readlines()
+
+    path = ""
+    for i in jsonParse["results"]["FILE_CREATED"]:
+        path += i["Compare"]["Path"] + "\n"
+
+    filesed = allVariables.pathToYaraSave + "\\" + currentApp + "\\" + currentApp + "_Asa_report.txt"
+    with open(filesed, "w") as write_file:
+        write_file.write(path)
+
+    request = [allVariables.sed, "-r", "-i"]
+    s = "/"
+    j = True
+    for i in blocklistASA:
+        if j:
+            s += i.rstrip("\n")
+            j = False
+        else:
+            s += "|" + i.rstrip("\n")
+    s += "/d"
+    request.append(s)
+    request.append(fileSed)
+    #print(request)
+
+    p = subprocess.Popen(request, stdout=subprocess.PIPE)
+    (output, err) = p.communicate()
+    p_status = p.wait()
+
 
 
 if __name__ == '__main__':
@@ -226,7 +263,7 @@ if __name__ == '__main__':
         ## Suppression of the current raw disk
         os.remove(convert_file)
 
-
+    
     ## AutoGeneYara
     hexa = "" 
     ProductVersion = ""
@@ -254,3 +291,15 @@ if __name__ == '__main__':
 
             s = "@%s@uninstall.txt" % (c[0])
             runAuto(s, stringProg)
+
+    if OnWindows.VarClient.pathToAsa:
+        for content in os.listdir(OnWindows.VarClient.pathToAsaReport):
+            l = blockProg()
+            currentApp = content.split("_")[0]
+            for line in l:
+                if line.split(":")[0] == currentApp:
+                    currentApp = line.split(":")[1].rstrip("\n")
+            
+            chemin = os.path.join(OnWindows.VarClient.pathToAsaReport, content)
+            if os.path.isfile(chemin):
+                parseAsa(chemin, currentApp)
