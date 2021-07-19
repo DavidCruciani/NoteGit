@@ -102,7 +102,7 @@ def parseAsa(asaReport, currentApp):
     for i in jsonParse["results"]["FILE_CREATED"]:
         path += i["Compare"]["Path"] + "\n"
 
-    filesed = allVariables.pathToYaraSave + "\\" + currentApp + "\\" + currentApp + "_Asa_report.txt"
+    filesed = allVariables.pathToYaraSave + "/" + currentApp + "/" + currentApp + "_Asa_report.txt"
     with open(filesed, "w") as write_file:
         write_file.write(path)
 
@@ -117,7 +117,7 @@ def parseAsa(asaReport, currentApp):
             s += "|" + i.rstrip("\n")
     s += "/d"
     request.append(s)
-    request.append(fileSed)
+    request.append(filesed)
     #print(request)
 
     p = subprocess.Popen(request, stdout=subprocess.PIPE)

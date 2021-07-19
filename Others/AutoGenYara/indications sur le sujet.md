@@ -102,7 +102,7 @@ https://docs.microsoft.com/en-us/sysinternals/downloads/sync
 - [x] ajouter liste de base pour arborescence
 - [x] Code pour copier gros fichier pour écraser disque
 - [x] Ajout de Sync
-- [ ] Ajout de AsA
+- [x] Ajout de AsA
 
 
 
