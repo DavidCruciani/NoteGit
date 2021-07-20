@@ -46,4 +46,5 @@ pathToFirstFls = "C:\\Users\David\Desktop\Stage Circl\Python Prog\\fls_first"
 #Path to save yara rule on pc
 pathToYaraSave = "B:\Téléchargement\Yara"
 
+#Path to the folder who will contains AsaReport
 pathToAsaReport = ""

@@ -14,17 +14,18 @@ for i in re.split(r"/|\\", str(pathProg))[:-1]:
     pathWork += i + "/"
 sys.path.append(pathWork + "etc")
 import allVariables
-import OnWindows.VarClient
 import automatisation_yara
 import OnLinux.get_Fls_Strings
 
 
+# Load of the block list for the name of software
 def blockProg():
     f1 = open(pathWork + "etc/blockProg.txt", "r")
     l1 = f1.readlines()
     f1.close()
     return l1
 
+# Write the task into a file for the client
 def writeFile(app, uninstall):
     if uninstall:
         tmp = open(allVariables.pathToInstaller + "/uninstall.txt", "w")
@@ -41,11 +42,12 @@ def writeFile(app, uninstall):
     tmp.write(appstr + ", " + installerstr)
     tmp.close()
 
-
+# Get the list of running vms
 def runningVms():
     req = [allVariables.VBoxManage, "list", "runningvms"]
     return subprocess.run(req, capture_output=True)
 
+# Get the new name of the software using blocklist
 def nameApp(capp):
     app = capp.split(",")[0].split(":")[1]
 
@@ -56,6 +58,7 @@ def nameApp(capp):
             return line.split(":")[1].rstrip("\n")
     return app
 
+# Creation of yara rule for PE informations
 def create_rule(ext, hexa, product_version, l_app):
     app = ""
     for l in l_app:
@@ -85,23 +88,28 @@ def create_rule(ext, hexa, product_version, l_app):
 
     return rules
 
+# Creation of yara rule other than PE informations
 def runAuto(s, stringProg):
     pathS = os.path.join(allVariables.pathToStrings, s)
     if os.path.isfile(pathS):
         print(s)
         automatisation_yara.inditif(pathS, ProductVersion, l_app, stringProg)
 
+# Parse of Asa Report
 def parseAsa(asaReport, currentApp):
     with open(asaReport, "r") as asa_file:
         jsonParse = json.loads(asa_file.read())
 
+    ## Blocklist for unwanted path
     with open(pathWork + "etc/blocklistASA.txt", "r") as blockAsa:
         blocklistASA = blockAsa.readlines()
 
     path = ""
+    ## Important path are in FILE_CREATED
     for i in jsonParse["results"]["FILE_CREATED"]:
         path += i["Compare"]["Path"] + "\n"
 
+    ## Sed is apply to deleted the unwanted path specified in blocklistASA
     filesed = allVariables.pathToYaraSave + "/" + currentApp + "/" + currentApp + "_Asa_report.txt"
     with open(filesed, "w") as write_file:
         write_file.write(path)
@@ -127,6 +135,7 @@ def parseAsa(asaReport, currentApp):
 
 
 if __name__ == '__main__':
+    ## Get the new name of software and the number of them to install
     list_app_string = list()
     list_block = blockProg()
     fapp = open(allVariables.applist, "r")
@@ -144,7 +153,7 @@ if __name__ == '__main__':
             line_count += 1
     fapp.close()
 
-    #Do a special strings-grep for better performance latter
+    ## Do a special strings-grep for better performance during yara generation
     stringProg = ""
     if not allVariables.LinuxVM:
         r = 'strings %s | grep -i -E "%s' % (allVariables.pathToFirstStringsMachine, list_app_string[0].split(",")[0])
@@ -161,6 +170,7 @@ if __name__ == '__main__':
     j=0
     uninstall = False
     for i in range(0, line_count*2):
+        ## Output to know what the program is doing
         loc = i - j
         if uninstall:
             print("\nBoucle n: %s, Uninstall: %s" % (i, l_app[loc % len(l_app)].split(":")[1].split(",")[0]))
@@ -189,9 +199,10 @@ if __name__ == '__main__':
         else:
             print("[+] Windows Running")
 
-        ## wait windows machine to shutdown
+        ## Wait windows machine to shutdown
         res = runningVms()
 
+        ## Output to see the time that the windows machine is running
         cptime = 0
         while allVariables.WindowsVM in res.stdout.decode():
             time.sleep(60)
@@ -214,7 +225,6 @@ if __name__ == '__main__':
             convert_file = "%s%s_install.img" %(partage, nApp)
 
         print("## Convertion ##")
-        ############### Mettre plutot le nom de l'exe pour la machine linux pour faire un grep -i direct en fonction du nom
         res = subprocess.call([qemu, "convert", "-f", "vmdk", "-O", "raw", vm, convert_file])
         print("## Convertion Finish ##\n")
 
@@ -232,9 +242,10 @@ if __name__ == '__main__':
             else:
                 print("[+] Ubuntu Running")
 
-
+            ## Wait linux machine to shutdown
             res = runningVms()
-            
+
+            ## Output to see the time that the linux machine is running
             cptime = 0
             while allVariables.LinuxVM in res.stdout.decode():
                 time.sleep(60)
@@ -250,8 +261,10 @@ if __name__ == '__main__':
                     app_status = content.split(".")[0]
                     app = app_status.split("_")[0]
                     
+                    ## Run the fls command
                     OnLinux.get_Fls_Strings.fls(appchemin, allVariables.pathToStrings, app_status)
 
+                    ## Run Strings command
                     OnLinux.get_Fls_Strings.getStrings(appchemin, app, allVariables.pathToStrings, app_status)
 
         if i % 2 == 0:
@@ -292,14 +305,16 @@ if __name__ == '__main__':
             s = "@%s@uninstall.txt" % (c[0])
             runAuto(s, stringProg)
 
-    if OnWindows.VarClient.pathToAsa:
-        for content in os.listdir(OnWindows.VarClient.pathToAsaReport):
+
+    ## Parsing of the Asa Report
+    if allVariables.pathToAsa:
+        for content in os.listdir(allVariables.pathToAsaReport):
             l = blockProg()
             currentApp = content.split("_")[0]
             for line in l:
                 if line.split(":")[0] == currentApp:
                     currentApp = line.split(":")[1].rstrip("\n")
             
-            chemin = os.path.join(OnWindows.VarClient.pathToAsaReport, content)
+            chemin = os.path.join(allVariables.pathToAsaReport, content)
             if os.path.isfile(chemin):
                 parseAsa(chemin, currentApp)

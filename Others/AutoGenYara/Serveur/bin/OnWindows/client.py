@@ -134,7 +134,7 @@ if __name__ == '__main__':
 
                 print("[*] Install finish\n")
                 
-                # get the past to the app
+                # get the path to the app
                 print("[+] Path to exe search...")
                 request = ["cd", "/", "&", "dir", "/s", "/b", "%s.exe" % (dic[key[0]])]
 
