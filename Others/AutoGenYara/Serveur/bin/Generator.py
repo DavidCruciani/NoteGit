@@ -25,6 +25,16 @@ def blockProg():
     f1.close()
     return l1
 
+def callSubprocessPopen(request, shellUse = False):
+    if shellUse:
+        p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
+        (output, err) = p.communicate()
+        p_status = p.wait()
+    else:
+        p = subprocess.Popen(request, stdout=subprocess.PIPE)
+        (output, err) = p.communicate()
+        p_status = p.wait()
+
 # Write the task into a file for the client
 def writeFile(app, uninstall):
     if uninstall:
@@ -110,7 +120,10 @@ def parseAsa(asaReport, currentApp):
         path += i["Compare"]["Path"] + "\n"
 
     ## Sed is apply to deleted the unwanted path specified in blocklistASA
-    filesed = allVariables.pathToYaraSave + "/" + currentApp + "/" + currentApp + "_Asa_report.txt"
+    savePath =  allVariables.pathToYaraSave + "/" + currentApp
+    if not os.path.isdir(savePath):
+        os.mkdir(savePath)
+    filesed = savePath + "/" + currentApp + "_Asa_report.txt"
     with open(filesed, "w") as write_file:
         write_file.write(path)
 
@@ -128,9 +141,9 @@ def parseAsa(asaReport, currentApp):
     request.append(filesed)
     #print(request)
 
-    p = subprocess.Popen(request, stdout=subprocess.PIPE)
-    (output, err) = p.communicate()
-    p_status = p.wait()
+    callSubprocessPopen(request)
+
+    return filesed
 
 
 
@@ -155,7 +168,7 @@ if __name__ == '__main__':
 
     ## Do a special strings-grep for better performance during yara generation
     stringProg = ""
-    if not allVariables.LinuxVM:
+    """if not allVariables.LinuxVM:
         r = 'strings %s | grep -i -E "%s' % (allVariables.pathToFirstStringsMachine, list_app_string[0].split(",")[0])
         for i in range(1, len(list_app_string)):
             r += " | " + list_app_string[i].split(",")[0]
@@ -163,7 +176,7 @@ if __name__ == '__main__':
         print(r)
         p = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
         (output, err) = p.communicate()
-        p_status = p.wait()
+        p_status = p.wait()"""
 
 
     res = runningVms()
@@ -187,7 +200,7 @@ if __name__ == '__main__':
 
         writeFile(l_app[loc], uninstall)
 
-        res = runningVms()
+        """res = runningVms()
 
         request = [allVariables.VBoxManage, 'startvm', allVariables.WindowsVM, '--type', 'headless']
         if not allVariables.WindowsVM in res.stdout.decode():
@@ -210,7 +223,7 @@ if __name__ == '__main__':
             print("\rTime spent: %s min" % (cptime), end="")
             res = runningVms()
 
-        print("\n[+] Windows stop\n")
+        print("\n[+] Windows stop\n")"""
 
 
         ## Convert windows machine into raw format
@@ -225,11 +238,11 @@ if __name__ == '__main__':
             convert_file = "%s%s_install.img" %(partage, nApp)
 
         print("## Convertion ##")
-        res = subprocess.call([qemu, "convert", "-f", "vmdk", "-O", "raw", vm, convert_file])
+        #res = subprocess.call([qemu, "convert", "-f", "vmdk", "-O", "raw", vm, convert_file])
         print("## Convertion Finish ##\n")
 
         
-        if allVariables.LinuxVM:
+        """if allVariables.LinuxVM:
             res = runningVms()
             
             request = [allVariables.VBoxManage, 'startvm', allVariables.LinuxVM]
@@ -265,7 +278,49 @@ if __name__ == '__main__':
                     OnLinux.get_Fls_Strings.fls(appchemin, allVariables.pathToStrings, app_status)
 
                     ## Run Strings command
-                    OnLinux.get_Fls_Strings.getStrings(appchemin, app, allVariables.pathToStrings, app_status)
+                    OnLinux.get_Fls_Strings.getStrings(appchemin, app, allVariables.pathToStrings, app_status)"""
+
+
+        ## Parsing of the Asa Report
+        if not uninstall:
+            if allVariables.pathToAsaReport:
+                print("[+] Parsing AsA Report")
+                ## Parsing
+                content = l_app[loc].split(".")[0] + "_install_Asa_compare.json"
+                chemin = os.path.join(allVariables.pathToAsaReport, content)
+                if os.path.isfile(chemin):
+                    filesed = parseAsa(chemin, nApp)
+                    ## read path collect by parser
+                    with open(filesed, "r") as read_file:
+                        AsaPath = read_file.readlines()
+
+                    ## create mount directory
+                    pathMnt = "./mnt_convert"
+                    if not os.path.isdir(pathMnt):
+                        os.mkdir(pathMnt)
+
+                    ## mount the convert image
+                    print("\t[+] Mount")
+                    request = "sudo mount -o loop,ro,noexec,noload,offset=$((512*104448)) " + convert_file + " " + pathMnt
+                    callSubprocessPopen(request, True)
+
+                    #write_md5 = open("./" + nApp + "_md5", "w")
+
+                    ## md5 for each file of AsaPath
+                    print("\t[+] Md5 Asa")
+                    for pathMd5 in AsaPath:
+                        pathMd5 = pathMnt + "/" + pathMd5.split(":")[1].rstrip("\n")[1:]
+                        pathMd5 = re.sub(r"\\","/", pathMd5)
+                        #request = "md5sum " + pathMd5 + ">>" + "./" + nApp + "_md5"
+                        request = ["md5sum", pathMd5, ">>", "./" + nApp + "_md5"]
+                        callSubprocessPopen(request, True)
+
+                    ## umount the convert image
+                    print("\t[+] Umount")
+                    request = "sudo umount " + pathMnt
+                    callSubprocessPopen(request, True)
+
+
 
         if i % 2 == 0:
             j += 1
@@ -274,11 +329,11 @@ if __name__ == '__main__':
             uninstall = False
 
         ## Suppression of the current raw disk
-        os.remove(convert_file)
+        #os.remove(convert_file)
 
     
     ## AutoGeneYara
-    hexa = "" 
+    """hexa = "" 
     ProductVersion = ""
     for content in os.listdir(allVariables.pathToShareWindows):
         l = blockProg()
@@ -303,18 +358,4 @@ if __name__ == '__main__':
             runAuto(s, stringProg)
 
             s = "@%s@uninstall.txt" % (c[0])
-            runAuto(s, stringProg)
-
-
-    ## Parsing of the Asa Report
-    if allVariables.pathToAsa:
-        for content in os.listdir(allVariables.pathToAsaReport):
-            l = blockProg()
-            currentApp = content.split("_")[0]
-            for line in l:
-                if line.split(":")[0] == currentApp:
-                    currentApp = line.split(":")[1].rstrip("\n")
-            
-            chemin = os.path.join(allVariables.pathToAsaReport, content)
-            if os.path.isfile(chemin):
-                parseAsa(chemin, currentApp)
+            runAuto(s, stringProg)"""
