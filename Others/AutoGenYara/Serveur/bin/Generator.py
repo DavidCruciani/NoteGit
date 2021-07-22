@@ -5,6 +5,7 @@ import json
 import uuid
 import time
 import get_pe
+import shutil
 import datetime
 import subprocess
 import pathlib
@@ -120,10 +121,7 @@ def parseAsa(asaReport, currentApp):
         path += i["Compare"]["Path"] + "\n"
 
     ## Sed is apply to deleted the unwanted path specified in blocklistASA
-    savePath =  allVariables.pathToYaraSave + "/" + currentApp
-    if not os.path.isdir(savePath):
-        os.mkdir(savePath)
-    filesed = savePath + "/" + currentApp + "_Asa_report.txt"
+    filesed = "./" + currentApp + "_Asa_report.txt"
     with open(filesed, "w") as write_file:
         write_file.write(path)
 
@@ -168,7 +166,7 @@ if __name__ == '__main__':
 
     ## Do a special strings-grep for better performance during yara generation
     stringProg = ""
-    """if not allVariables.LinuxVM:
+    if not allVariables.LinuxVM:
         r = 'strings %s | grep -i -E "%s' % (allVariables.pathToFirstStringsMachine, list_app_string[0].split(",")[0])
         for i in range(1, len(list_app_string)):
             r += " | " + list_app_string[i].split(",")[0]
@@ -176,7 +174,7 @@ if __name__ == '__main__':
         print(r)
         p = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
         (output, err) = p.communicate()
-        p_status = p.wait()"""
+        p_status = p.wait()
 
 
     res = runningVms()
@@ -200,7 +198,7 @@ if __name__ == '__main__':
 
         writeFile(l_app[loc], uninstall)
 
-        """res = runningVms()
+        res = runningVms()
 
         request = [allVariables.VBoxManage, 'startvm', allVariables.WindowsVM, '--type', 'headless']
         if not allVariables.WindowsVM in res.stdout.decode():
@@ -223,7 +221,7 @@ if __name__ == '__main__':
             print("\rTime spent: %s min" % (cptime), end="")
             res = runningVms()
 
-        print("\n[+] Windows stop\n")"""
+        print("\n[+] Windows stop\n")
 
 
         ## Convert windows machine into raw format
@@ -238,11 +236,11 @@ if __name__ == '__main__':
             convert_file = "%s%s_install.img" %(partage, nApp)
 
         print("## Convertion ##")
-        #res = subprocess.call([qemu, "convert", "-f", "vmdk", "-O", "raw", vm, convert_file])
+        res = subprocess.call([qemu, "convert", "-f", "vmdk", "-O", "raw", vm, convert_file])
         print("## Convertion Finish ##\n")
 
         
-        """if allVariables.LinuxVM:
+        if allVariables.LinuxVM:
             res = runningVms()
             
             request = [allVariables.VBoxManage, 'startvm', allVariables.LinuxVM]
@@ -278,7 +276,7 @@ if __name__ == '__main__':
                     OnLinux.get_Fls_Strings.fls(appchemin, allVariables.pathToStrings, app_status)
 
                     ## Run Strings command
-                    OnLinux.get_Fls_Strings.getStrings(appchemin, app, allVariables.pathToStrings, app_status)"""
+                    OnLinux.get_Fls_Strings.getStrings(appchemin, app, allVariables.pathToStrings, app_status)
 
 
         ## Parsing of the Asa Report
@@ -304,21 +302,42 @@ if __name__ == '__main__':
                     request = "sudo mount -o loop,ro,noexec,noload,offset=$((512*104448)) " + convert_file + " " + pathMnt
                     callSubprocessPopen(request, True)
 
-                    #write_md5 = open("./" + nApp + "_md5", "w")
-
                     ## md5 for each file of AsaPath
                     print("\t[+] Md5 Asa")
                     for pathMd5 in AsaPath:
                         pathMd5 = pathMnt + "/" + pathMd5.split(":")[1].rstrip("\n")[1:]
                         pathMd5 = re.sub(r"\\","/", pathMd5)
-                        #request = "md5sum " + pathMd5 + ">>" + "./" + nApp + "_md5"
-                        request = ["md5sum", pathMd5, ">>", "./" + nApp + "_md5"]
+                        pathMd5 = pathMd5.split("/")
+
+                        ## Add "" for each folder who contains space caracters
+                        cp = 0
+                        for sp in pathMd5:
+                            for car in sp:
+                                if car == " ":
+                                    pathMd5[cp] = '"' + pathMd5[cp] + '"'
+                            cp += 1
+
+                        ## Reassemble the strings
+                        stringPath = ""
+                        for sp in pathMd5:
+                            stringPath += sp + "/"
+
+                        pathMd5 = stringPath[:-1]
+
+                        savePath =  allVariables.pathToYaraSave + "/" + nApp
+                        if not os.path.isdir(savePath):
+                            os.mkdir(savePath)
+
+                        request = "md5sum " + pathMd5 + " >> " + savePath + "/" + nApp + "_md5"
                         callSubprocessPopen(request, True)
 
                     ## umount the convert image
                     print("\t[+] Umount")
                     request = "sudo umount " + pathMnt
                     callSubprocessPopen(request, True)
+
+                    ## Delete Asa path 
+                    os.remove(filesed)
 
 
 
@@ -329,11 +348,13 @@ if __name__ == '__main__':
             uninstall = False
 
         ## Suppression of the current raw disk
-        #os.remove(convert_file)
+        os.remove(convert_file)
 
+    ## Suppression of mount folder
+    shutil.rmtree(pathMnt)
     
     ## AutoGeneYara
-    """hexa = "" 
+    hexa = "" 
     ProductVersion = ""
     for content in os.listdir(allVariables.pathToShareWindows):
         l = blockProg()
@@ -358,4 +379,4 @@ if __name__ == '__main__':
             runAuto(s, stringProg)
 
             s = "@%s@uninstall.txt" % (c[0])
-            runAuto(s, stringProg)"""
+            runAuto(s, stringProg)
