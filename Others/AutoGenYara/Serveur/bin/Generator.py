@@ -177,6 +177,7 @@ if __name__ == '__main__':
         p_status = p.wait()
 
 
+    pathMnt = ""
     res = runningVms()
     j=0
     uninstall = False
@@ -351,7 +352,10 @@ if __name__ == '__main__':
         os.remove(convert_file)
 
     ## Suppression of mount folder
-    shutil.rmtree(pathMnt)
+    try:
+        shutil.rmtree(pathMnt)
+    except:
+        pass
     
     ## AutoGeneYara
     hexa = "" 

@@ -155,7 +155,7 @@ if __name__ == '__main__':
                 print("[+] Run exe...")
                 p = subprocess.Popen(path, stdout=subprocess.PIPE, shell=True)
 
-                time.sleep(10)
+                time.sleep(20)
                 
                 # search for the pid created by the above subprocess and kill it
                 if psutil.pid_exists(p.pid):
