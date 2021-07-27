@@ -2,10 +2,6 @@
 applist = "B:\\git\\NoteGit\\Others\\AutoGenYara\\Serveur\\tests\listapp.txt"
 #applist = "B:\\git\\NoteGit\\Others\\AutoGenYara\\Serveur\\tests\\app.txt"
 
-#Settings for server flask
-host = "0.0.0.0"
-port = "5000"
-
 pathToInstaller = "B:\VM\PartageVM\Installer"
 
 #Path to VBoxManage

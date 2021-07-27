@@ -42,6 +42,10 @@ def callSubprocess(request, shellUse = False):
     except:
         pass
 
+def reboot(chemin, pathInstaller):
+    os.rename(chemin, os.path.join(pathInstaller, "reboot.txt"))
+    os.system("shutdown /r /t 10")
+
 ## Run Sync to flush filesystem data
 def sync():
     if VarClient.pathToSync:
@@ -100,7 +104,9 @@ if __name__ == '__main__':
             dic = ast.literal_eval(l)
             key = list(dic.keys())
 
-            if "uninstall" in content:
+            if "reboot" in content:
+                sync()
+            elif "uninstall" in content:
                 print("[*] Uninstallation")
                 #exit(0)
                 request = appManager(False, dic[key[1]], key[0])
@@ -113,7 +119,8 @@ if __name__ == '__main__':
 
                 sync()
                 copyBigFile()
-                sync()
+                reboot(chemin, VarClient.pathToInstaller)
+                #sync()
 
                 print("[*] Uninstall finish")
             else:

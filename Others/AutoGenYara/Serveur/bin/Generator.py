@@ -193,6 +193,7 @@ if __name__ == '__main__':
         else:
             print("\nBoucle n: %s, Install: %s" % (i, l_app[loc % len(l_app)].split(":")[1].split(",")[0]))
             try:
+                os.remove(allVariables.pathToInstaller + "/reboot.txt")
                 os.remove(allVariables.pathToInstaller + "/uninstall.txt")
             except:
                 pass
@@ -373,7 +374,7 @@ if __name__ == '__main__':
             print(rule)
             automatisation_yara.save_rule(c[0], c[1], rule)
 
-            s = "@%s@fls_install.tree" % (c[0])
+            """s = "@%s@fls_install.tree" % (c[0])
             runAuto(s, stringProg)
             
             s = "@%s@fls_uninstall.tree" % (c[0])
@@ -383,4 +384,9 @@ if __name__ == '__main__':
             runAuto(s, stringProg)
 
             s = "@%s@uninstall.txt" % (c[0])
-            runAuto(s, stringProg)
+            runAuto(s, stringProg)"""
+
+    for content in os.listdir(allVariables.pathToStrings):
+        chemin = os.path.join(allVariables.pathToStrings, content)
+        if os.path.isfile(chemin):
+            automatisation_yara.inditif(chemin, ProductVersion, l_app, stringProg)
