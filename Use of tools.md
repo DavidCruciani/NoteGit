@@ -473,7 +473,11 @@ deactivate
 
 
 
+#### Windows
 
+##### Fill a space disk
+
+`fsutil file createnew temp_10GB_file 1000000000`
 
 
 

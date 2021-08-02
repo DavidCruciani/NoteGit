@@ -2,11 +2,14 @@ import os
 import ast
 import glob
 import time
+import shutil
 import psutil
 import VarClient
 import subprocess
 
 # put client.exe in the startup folder, "Windows" + "r" and "shell:startup"
+
+logFile = open("\\\VBOXSVR\\PartageVM\\logClient.txt", "a")
 
 ## Prepare the request depending on the installer
 def appManager(status, installer, app):
@@ -27,7 +30,7 @@ def appManager(status, installer, app):
             return "%s %s" % (VarClient.pathToUninstaller, app)
 
 
-def callSubprocess(request, shellUse = False):
+def callSubprocess(who, request, shellUse = False):
     if shellUse:
         p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
         (output, err) = p.communicate()
@@ -38,50 +41,93 @@ def callSubprocess(request, shellUse = False):
         p_status = p.wait()
 
     try:
-        print(output.decode())
+        logFile.write("%s: %s\n" % (who, output.decode()))
     except:
-        pass
+        logFile.write("%s: %s\n" % (who, str(output)))
 
 def reboot(chemin, pathInstaller):
     os.rename(chemin, os.path.join(pathInstaller, "reboot.txt"))
     os.system("shutdown /r /t 10")
+
+def sDelete():
+    request = "%s -c C:" % (VarClient.pathToSDelete)
+
+    p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
+    (output, err) = p.communicate()
+    p_status = p.wait()
+
+    try:
+        logFile.write("fillSpace: " + output.decode() + "\n")
+    except:
+        logFile.write("fillSpace: " + str(output) + "\n")
 
 ## Run Sync to flush filesystem data
 def sync():
     if VarClient.pathToSync:
         print("[+] Sync")
         request = [VarClient.pathToSync, "c"]
-        callSubprocess(request)
+        callSubprocess("sync", request)
+
+def fillSpace():
+    total, used, free = shutil.disk_usage("/")
+
+    request = "fsutil file createnew C:\\Users\\Administrateur\\Downloads\\temp_file %s" % (free - 100)
+
+    p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
+    (output, err) = p.communicate()
+    p_status = p.wait()
+
+    try:
+        logFile.write("fillSpace: " + output.decode() + "\n")
+    except:
+        logFile.write("fillSpace: " + str(output) + "\n")
+
+def removeFillSpace():
+    if os.path.isfile("C:\\Users\\Administrateur\\Downloads\\temp_file"):
+        if os.remove("C:\\Users\\Administrateur\\Downloads\\temp_file"):
+            return True
+    return False
 
 ## Copy a big file on the disk to erase residual data
-def copyBigFile():
+"""def copyBigFile():
     if VarClient.pathToCopy:
         print("[+] Copy of big file")
         request = ["copy", VarClient.pathToCopy, "C:\\Users\\Administrateur\\Downloads"]
-        callSubprocess(request, True)
+
+        p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
+        (output, err) = p.communicate()
+        p_status = p.wait()
+        print("[+] Copy of big file End")
 
 ## Remove big file for an other installation
 def removeBigFile():
     if os.path.isfile("C:\\Users\\Administrateur\\Downloads\\string_first"):
-        os.remove("C:\\Users\\Administrateur\\Downloads\\string_first")
+        os.remove("C:\\Users\\Administrateur\\Downloads\\string_first")"""
 
 ## Run an asa collect for a later compare
 def AsACollect():
     if VarClient.pathToAsa:
         print("[+] AsA collect")
         request = [VarClient.pathToAsa, "collect", "-a"]
-        callSubprocess(request)
+        callSubprocess("AsaCollect", request)
 
 ## Compare two asa collect and move the result to the share folder
 def AsAExport(app):
     if VarClient.pathToAsa:
         print("[+] AsA export")
         request = [VarClient.pathToAsa, "export-collect"]
-        callSubprocess(request)
+        callSubprocess("AsaExport", request)
 
         print("[+] Move AsA report")
         request = ["move", ".\\2021*", VarClient.pathToAsaReport + app.split(".")[0] + "_install_Asa_compare.json"]
-        callSubprocess(request, True)
+        
+        p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
+        (output, err) = p.communicate()
+        p_status = p.wait()
+        try:
+            logFile.write("Move Asa: " + output.decode() + "\n")
+        except:
+            logFile.write("Move Asa: " + str(output) + "\n")
 
         print("[+] Delete Asa Sqlite File")
         files = glob.glob('.\\asa.sqlite*', recursive=True)
@@ -108,26 +154,29 @@ if __name__ == '__main__':
                 sync()
             elif "uninstall" in content:
                 print("[*] Uninstallation")
-                #exit(0)
+                logFile.write("[*] Uninstallation\n")
                 request = appManager(False, dic[key[1]], key[0])
                 print(request)
                 
-                callSubprocess(request)
+                callSubprocess("AppManager", request)
 
                 if "exe" == dic[key[1]]:
                     input("\nEnter when finish")
 
-                sync()
-                copyBigFile()
-                reboot(chemin, VarClient.pathToInstaller)
+                #sync()
+                #fillSpace()
+                #copyBigFile()
+                #reboot(chemin, VarClient.pathToInstaller)
+                sDelete()
+                
                 #sync()
 
                 print("[*] Uninstall finish")
             else:
                 print("[*] Installation")
-                #exit(0)
-
-                removeBigFile()
+                logFile.write("[*] Installation\n")
+                #removeBigFile()
+                logFile.write("removeFillSpace: " + str(removeFillSpace()))
                 AsACollect()
 
                 request = appManager(True, dic[key[1]], key[0])
@@ -135,7 +184,11 @@ if __name__ == '__main__':
                 p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
                 (output, err) = p.communicate()
                 p_status = p.wait()
-                
+                try:
+                    logFile.write("AppManager: " + output.decode() + "\n")
+                except:
+                    logFile.write("AppManager: " + str(output) + "\n")
+
                 if dic[key[1]] == "choco":
                     print("[+] Output installation: " + output.decode())
 
@@ -148,15 +201,25 @@ if __name__ == '__main__':
                 p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
                 (output, err) = p.communicate()
                 p_status = p.wait()
-                
+                try:
+                    logFile.write("Path search " + output.decode() + "\n")
+                except:
+                    logFile.write("Path search " + str(output) + "\n")
+
                 path = output.decode().split("\n")[0].rstrip("\n\r")
                 
                 
                 # copy the app on the share folder of the vm
                 print("[+] Copy exe...")
-                r = 'copy "' + path + '"' + VarClient.pathToExeExtract
-                
-                callSubprocess(r, True)
+                r = 'copy "' + path + '" ' + VarClient.pathToExeExtract
+
+                pCopy = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
+                (output, err) = pCopy.communicate()
+                p_status = pCopy.wait()
+                try:
+                    logFile.write("Copy Exe: " + output.decode() + "\n")
+                except:
+                    logFile.write("Copy Exe: " + str(output) + "\n")
                 
                 # run exe to have more artefacts
                 print("[+] Run exe...")

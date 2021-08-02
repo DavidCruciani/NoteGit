@@ -10,6 +10,8 @@ pathToUninstaller = "\\\VBOXSVR\\PartageVM\\UninstallX64.exe"
 #Path to sync.exe (Disk)
 pathToSync = "C:/Users/Administrateur/Downloads/sync64.exe"
 
+pathToSDelete = "C:/Users/Administrateur/Downloads/sdelete64.exe"
+
 #Path to the file to copy after the uninstallation (ShareFolder)
 pathToCopy = "\\\VBOXSVR\\PartageVM\\string_first"
 
