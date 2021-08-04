@@ -25,7 +25,7 @@ def appManager(status, installer, app):
             return "msiexec /x %s%s /qn" % (VarClient.pathToInstaller + "\\installer\\", app)
     elif installer == "exe":
         if status:
-            return "%s%s /s /v\"/qn\"" % (VarClient.pathToInstaller, app)
+            return "%s\\%s /s /v\"/qn\"" % (VarClient.pathToInstaller, app)
         else:
             return "%s %s" % (VarClient.pathToUninstaller, app)
 
@@ -45,64 +45,27 @@ def callSubprocess(who, request, shellUse = False):
     except:
         logFile.write("%s: %s\n" % (who, str(output)))
 
-def reboot(chemin, pathInstaller):
-    os.rename(chemin, os.path.join(pathInstaller, "reboot.txt"))
-    os.system("shutdown /r /t 10")
 
 def sDelete():
-    request = "%s -c C:" % (VarClient.pathToSDelete)
-
-    p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
-    (output, err) = p.communicate()
-    p_status = p.wait()
-
-    try:
-        logFile.write("fillSpace: " + output.decode() + "\n")
-    except:
-        logFile.write("fillSpace: " + str(output) + "\n")
-
-## Run Sync to flush filesystem data
-def sync():
-    if VarClient.pathToSync:
-        print("[+] Sync")
-        request = [VarClient.pathToSync, "c"]
-        callSubprocess("sync", request)
-
-def fillSpace():
-    total, used, free = shutil.disk_usage("/")
-
-    request = "fsutil file createnew C:\\Users\\Administrateur\\Downloads\\temp_file %s" % (free - 100)
-
-    p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
-    (output, err) = p.communicate()
-    p_status = p.wait()
-
-    try:
-        logFile.write("fillSpace: " + output.decode() + "\n")
-    except:
-        logFile.write("fillSpace: " + str(output) + "\n")
-
-def removeFillSpace():
-    if os.path.isfile("C:\\Users\\Administrateur\\Downloads\\temp_file"):
-        if os.remove("C:\\Users\\Administrateur\\Downloads\\temp_file"):
-            return True
-    return False
-
-## Copy a big file on the disk to erase residual data
-"""def copyBigFile():
-    if VarClient.pathToCopy:
-        print("[+] Copy of big file")
-        request = ["copy", VarClient.pathToCopy, "C:\\Users\\Administrateur\\Downloads"]
+    if VarClient.pathToSDelete:
+        print("[+] SDelete")
+        request = "%s -c C:" % (VarClient.pathToSDelete)
 
         p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
         (output, err) = p.communicate()
         p_status = p.wait()
-        print("[+] Copy of big file End")
 
-## Remove big file for an other installation
-def removeBigFile():
-    if os.path.isfile("C:\\Users\\Administrateur\\Downloads\\string_first"):
-        os.remove("C:\\Users\\Administrateur\\Downloads\\string_first")"""
+        try:
+            logFile.write("sDelete: " + output.decode('utf-16') + "\n")
+        except:
+            logFile.write("sDelete: " + str(output) + "\n")
+
+        try:
+            logFile.write("sDeleteError: " + err.decode('utf-8') + "\n")
+        except:
+            logFile.write("sDeleteError: " + str(err) + "\n")
+
+
 
 ## Run an asa collect for a later compare
 def AsACollect():
@@ -150,37 +113,33 @@ if __name__ == '__main__':
             dic = ast.literal_eval(l)
             key = list(dic.keys())
 
-            if "reboot" in content:
-                sync()
-            elif "uninstall" in content:
+            if "uninstall" in content:
                 print("[*] Uninstallation")
                 logFile.write("[*] Uninstallation\n")
                 request = appManager(False, dic[key[1]], key[0])
                 print(request)
-                
-                callSubprocess("AppManager", request)
+
+                if request:
+                    callSubprocess("AppManager", request)
 
                 if "exe" == dic[key[1]]:
                     input("\nEnter when finish")
 
-                #sync()
-                #fillSpace()
-                #copyBigFile()
-                #reboot(chemin, VarClient.pathToInstaller)
                 sDelete()
-                
-                #sync()
 
                 print("[*] Uninstall finish")
             else:
                 print("[*] Installation")
                 logFile.write("[*] Installation\n")
-                #removeBigFile()
-                logFile.write("removeFillSpace: " + str(removeFillSpace()))
+
                 AsACollect()
 
                 request = appManager(True, dic[key[1]], key[0])
                 print(request)
+
+                if request:
+                    callSubprocess("AppManager", request)
+
                 p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
                 (output, err) = p.communicate()
                 p_status = p.wait()
