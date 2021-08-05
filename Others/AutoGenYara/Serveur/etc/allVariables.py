@@ -31,6 +31,8 @@ xxd = "B:\\Téléchargement\\Logiciel\\linux_command\\xxd.exe"
 cut = "B:\\Téléchargement\\Logiciel\\linux_command\\cut.exe"
 #Path to sed
 sed = "B:\\Téléchargement\\Logiciel\\linux_command\\sed.exe"
+#Path to curl
+curl = "curl"
 
 #Path to strings of Windows VM without software install
 # pathToFirstStringsMachine = "C:\\Users\David\Desktop\Stage Circl\Python Prog\\first_machine_strings"

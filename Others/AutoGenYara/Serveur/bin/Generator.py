@@ -193,7 +193,6 @@ if __name__ == '__main__':
         else:
             print("\nBoucle n: %s, Install: %s" % (i, l_app[loc % len(l_app)].split(":")[1].split(",")[0]))
             try:
-                os.remove(allVariables.pathToInstaller + "/reboot.txt")
                 os.remove(allVariables.pathToInstaller + "/uninstall.txt")
             except:
                 pass
@@ -333,6 +332,9 @@ if __name__ == '__main__':
                         request = "md5sum " + pathMd5 + " >> " + savePath + "/" + nApp + "_md5"
                         callSubprocessPopen(request, True)
 
+                        request = "sha1sum " + pathMd5 + " >> " + savePath + "/" + nApp + "_sha1"
+                        callSubprocessPopen(request, True)
+
                     ## umount the convert image
                     print("\t[+] Umount")
                     request = "sudo umount " + pathMnt
@@ -340,8 +342,6 @@ if __name__ == '__main__':
 
                     ## Delete Asa path 
                     os.remove(filesed)
-
-
 
         if i % 2 == 0:
             j += 1
@@ -361,6 +361,8 @@ if __name__ == '__main__':
     ## AutoGeneYara
     hexa = "" 
     ProductVersion = ""
+    listProduct = dict()
+    # Rule for Exe
     for content in os.listdir(allVariables.pathToShareWindows):
         l = blockProg()
         c = content.split(".")
@@ -373,20 +375,75 @@ if __name__ == '__main__':
             rule = create_rule(c, hexa, ProductVersion, l_app)
             print(rule)
             automatisation_yara.save_rule(c[0], c[1], rule)
+            listProduct[c[0]] = ProductVersion
 
-            """s = "@%s@fls_install.tree" % (c[0])
-            runAuto(s, stringProg)
-            
-            s = "@%s@fls_uninstall.tree" % (c[0])
-            runAuto(s, stringProg)
-
-            s = "@%s@install.txt" % (c[0])
-            runAuto(s, stringProg)
-
-            s = "@%s@uninstall.txt" % (c[0])
-            runAuto(s, stringProg)"""
-
+    # Rule for strings and fls
     for content in os.listdir(allVariables.pathToStrings):
         chemin = os.path.join(allVariables.pathToStrings, content)
         if os.path.isfile(chemin):
-            automatisation_yara.inditif(chemin, ProductVersion, l_app, stringProg)
+            softName = content.split("@")[1]
+            automatisation_yara.inditif(chemin, listProduct[softName], l_app, stringProg)
+
+    # Hashlookup
+    for content in os.listdir(allVariables.pathToYaraSave):
+        pathFolder = os.path.join(allVariables.pathToYaraSave, content)
+        if os.path.isdir(pathFolder):
+            md5File = pathFolder + "/" + content + "_md5"
+            sha1File = pathFolder + "/" + content + "_sha1"
+
+            if os.path.isfile(md5File):
+                with open(md5File, "r") as md5Read:
+                    lines = md5Read.readlines()
+                    for line in lines:
+                        lineSplit = line.split(" ")
+                        request = "%s -s -X 'GET' 'https://hashlookup.circl.lu/lookup/md5/%s' -H 'accept: application/json'" % ( allVariables.curl, lineSplit[0].rstrip("\n") )
+                        p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
+                        (output, err) = p.communicate()
+                        p_status = p.wait()
+
+                        jsonResponse = json.loads(output.decode())
+
+                        if "message" in jsonResponse.keys():
+                            print(jsonResponse["message"])
+                        else:
+                            pathHash = os.path.join(pathFolder, "HashLookup")
+                            pathHashMd5 = os.path.join(pathHash, "md5")
+
+                            if not os.path.isdir(pathHash):
+                                os.mkdir(pathHash)
+                            if not os.path.isdir(pathHashMd5):
+                                os.mkdir(pathHashMd5)
+
+                            with open(pathHashMd5 + "/" + lineSplit[-1].rstrip("\n"), "w") as fileHash:
+                                fileHash.write(jsonResponse)
+                            #print(jsonResponse)
+            else:
+                print("There's no md5 file")
+
+            if os.path.isfile(sha1File):
+                with open(sha1File, "r") as sha1Read:
+                    lines = sha1Read.readlines()
+                    for line in lines:
+                        request = "%s -s -X 'GET' 'https://hashlookup.circl.lu/lookup/sha1/%s' -H 'accept: application/json'" % ( allVariables.curl, line.split(" ")[0].rstrip("\n") )
+                        p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
+                        (output, err) = p.communicate()
+                        p_status = p.wait()
+
+                        jsonResponse = json.loads(output.decode())
+
+                        if "message" in jsonResponse.keys():
+                            print(jsonResponse["message"])
+                        else:
+                            pathHash = os.path.join(pathFolder, "HashLookup")
+                            pathHashSha1 = os.path.join(pathHash, "sha1")
+
+                            if not os.path.isdir(pathHash):
+                                os.mkdir(pathHash)
+                            if not os.path.isdir(pathHashSha1):
+                                os.mkdir(pathHashSha1)
+
+                            with open(pathHashSha1 + "/" + lineSplit[-1].rstrip("\n"), "w") as fileHash:
+                                fileHash.write(jsonResponse)
+                            #print(jsonResponse)
+            else:
+                print("There's no sha1 file")
