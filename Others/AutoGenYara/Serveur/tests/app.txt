@@ -1,1 +1,2 @@
-putty.msi:putty,installer:msiexec
+putty.msi:putty,installer:msiexec,uninstaller:msiexec
+7z.install:7z,installer:choco,uninstaller:choco

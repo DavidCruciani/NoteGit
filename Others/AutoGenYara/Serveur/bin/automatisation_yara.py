@@ -15,7 +15,7 @@ import allVariables
 
 
 ####Creation of yara rule
-def create_rule(ext, s, product_version, l_app):
+def create_rule(ext, s, product_version, l_app, uninstaller):
     app = ""
     for l in l_app:
         if l.split(":")[1].rstrip("\n") == ext[1]:
@@ -33,7 +33,8 @@ def create_rule(ext, s, product_version, l_app):
     rules += 'author = "David Cruciani"\n\t\t'
     rules += 'date = "' + date.strftime('%Y-%m-%d') + '"\n\t\t'
     rules += 'versionApp = "%s"\n\t\t' % (product_version)
-    rules += 'uuid = "%s"\n\t' % (str(uuid.uuid4()))
+    rules += 'uuid = "%s"\n\t\t' % (str(uuid.uuid4()))
+    rules += 'uninstaller = "%s"\n\t' % (uninstaller)
 
     rules += "strings: \n"
 
@@ -59,23 +60,27 @@ def create_rule(ext, s, product_version, l_app):
     return rules
 
 ###Save of the rule on the disk
-def save_rule(ext1, ext2, rules, flag = False):
+def save_rule(ext1, ext2, rules, uninstaller, flag = False):
     chemin = os.path.join(allVariables.pathToYaraSave, ext1)
     if not os.path.isdir(chemin):
         os.mkdir(chemin)
+
+    cheminUninstall = os.path.join(chemin, uninstaller)
+    if not os.path.isdir(cheminUninstall):
+        os.mkdir(cheminUninstall)
         
     if flag:
-        chemin = os.path.join(chemin, "tree")
+        cheminUninstall = os.path.join(cheminUninstall, "tree")
 
-    if not os.path.isdir(chemin):
-        os.mkdir(chemin)
+    if not os.path.isdir(cheminUninstall):
+        os.mkdir(cheminUninstall)
 
-    yara_rule = open("%s/%s_%s.yar" % (chemin, ext1, ext2), "w")
+    yara_rule = open("%s/%s_%s.yar" % (cheminUninstall, ext1, ext2), "w")
     yara_rule.write(rules)
     yara_rule.close()
 
 
-def file_create_rule(chemin, file_version, l_app, stringProg, flag = False):
+def file_create_rule(chemin, file_version, l_app, stringProg, uninstaller, flag = False):
     s = list()
 
     f = open(chemin, "r")
@@ -136,18 +141,18 @@ def file_create_rule(chemin, file_version, l_app, stringProg, flag = False):
     del(ext[-2:-1])
 
     ####Creation of yara rule
-    rules = create_rule(ext, s, file_version, l_app)
+    rules = create_rule(ext, s, file_version, l_app, uninstaller)
 
     print(rules)
     #exit(0)
 
     ###Save of the rule on the disk
-    save_rule(ext[1], ext[2], rules, flag)
+    save_rule(ext[1], ext[2], rules, uninstaller, flag)
 
 
 
 
-def inditif(fichier, file_version, l_app, stringProg):
+def inditif(fichier, file_version, l_app, stringProg, uninstaller):
     try:
         extension = fichier.split(".")[1]
     except:
@@ -156,6 +161,6 @@ def inditif(fichier, file_version, l_app, stringProg):
 
     ## the file is a tree
     if fichier.split(".")[1] == "tree":
-        file_create_rule(fichier, file_version, l_app, stringProg, True)
+        file_create_rule(fichier, file_version, l_app, stringProg, uninstaller, True)
     else:
-        file_create_rule(fichier, file_version, l_app, stringProg)
+        file_create_rule(fichier, file_version, l_app, stringProg, uninstaller)
