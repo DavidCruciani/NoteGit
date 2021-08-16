@@ -185,8 +185,8 @@ if __name__ == '__main__':
     fapp.close()
 
     ## Do a special strings-grep for better performance during yara generation
-    stringProg = ""
-    """if not allVariables.LinuxVM:
+    stringProg = "stringProg"
+    if not allVariables.LinuxVM:
         r = 'strings %s | grep -i -E "%s' % (allVariables.pathToFirstStringsMachine, list_app_string[0].split(",")[0])
         for i in range(1, len(list_app_string)):
             r += " | " + list_app_string[i].split(",")[0]
@@ -292,12 +292,24 @@ if __name__ == '__main__':
                 if os.path.isfile(appchemin):
                     app_status = content.split(".")[0]
                     app = app_status.split("_")[0]
+
+                    listMultiSoft = list()
+
+                    with open(pathWork + "etc/MultiSoft.txt", "r") as MultiSoft:
+                        lines = MultiSoft.readlines()
+                        for l in lines :
+                            if app == l.split(":")[0]:
+                                listMultiSoft = l.split(":")[1].split(",")
+                                listMultiSoft[-1] = listMultiSoft[-1].rstrip("\n")
+
+                    if len(listMultiSoft) == 0:
+                        listMultiSoft.append(app)
                     
                     ## Run the fls command
                     OnLinux.get_Fls_Strings.fls(appchemin, allVariables.pathToStrings, app_status)
 
                     ## Run Strings command
-                    OnLinux.get_Fls_Strings.getStrings(appchemin, app, allVariables.pathToStrings, app_status)
+                    OnLinux.get_Fls_Strings.getStrings(appchemin, listMultiSoft, allVariables.pathToStrings, app_status)
 
 
         ## Parsing of the Asa Report
@@ -376,7 +388,7 @@ if __name__ == '__main__':
     try:
         shutil.rmtree(pathMnt)
     except:
-        pass"""
+        pass
     
     ## AutoGeneYara
     hexa = "" 
@@ -411,7 +423,7 @@ if __name__ == '__main__':
             automatisation_yara.inditif(chemin, listProduct[softName], l_app, stringProg, uninstaller)
 
     # Hashlookup
-    """for content in os.listdir(allVariables.pathToYaraSave):
+    for content in os.listdir(allVariables.pathToYaraSave):
         pathFolder = os.path.join(allVariables.pathToYaraSave, content)
         if os.path.isdir(pathFolder):
             md5File = pathFolder + "/" + content + "_md5"
@@ -472,4 +484,4 @@ if __name__ == '__main__':
                                 fileHash.write(str(jsonResponse))
                             #print(jsonResponse)
             else:
-                print("There's no sha1 file")"""
+                print("There's no sha1 file")

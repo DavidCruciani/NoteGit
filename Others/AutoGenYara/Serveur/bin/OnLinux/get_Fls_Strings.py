@@ -49,13 +49,30 @@ def fls(cheminMachine, cheminOut, app_status):
 	os.remove("%sstart_partition" % (cheminOut))
 	
 	
-def getStrings(appchemin, app, cheminOut, app_status):
-	r = "strings %s | grep -i %s > %s@%s@%s.txt" % (appchemin, app, cheminOut, app_status.split("_")[0], app_status.split("_")[1])
+def getStrings(appchemin, listMultiSoft, cheminOut, app_status):
+	r = 'strings %s | grep -i -E "'
+
+	for soft in listMultiSoft:
+		r += '%s |' % (soft)
+	r = r[:-1]
+	pathGlob = "%s@%s@%s.txt" % (cheminOut, app_status.split("_")[0], app_status.split("_")[1])
+	r += '" > %s' % (pathGlob)
+
 	print("[+] Strings for %s" % (app_status.split("_")[0]))
 	
 	p = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
 	(output, err) = p.communicate()
 	p_status = p.wait()
+
+	if not len(listMultiSoft):
+		for soft in listMultiSoft:
+			request = "grep -i %s %s > %s@%s@%s.txt" % (soft, pathGlob, cheminOut, soft, app_status.split("_")[1])
+
+			p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
+			(output, err) = p.communicate()
+			p_status = p.wait()
+
+		os.remove(pathGlob)
 
 
 
