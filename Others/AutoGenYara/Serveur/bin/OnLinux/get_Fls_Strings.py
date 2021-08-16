@@ -50,7 +50,7 @@ def fls(cheminMachine, cheminOut, app_status):
 	
 	
 def getStrings(appchemin, listMultiSoft, cheminOut, app_status):
-	r = 'strings %s | grep -i -E "'
+	r = 'strings %s | grep -i -E "' % (appchemin)
 
 	for soft in listMultiSoft:
 		r += '%s |' % (soft)
@@ -58,13 +58,15 @@ def getStrings(appchemin, listMultiSoft, cheminOut, app_status):
 	pathGlob = "%s@%s@%s.txt" % (cheminOut, app_status.split("_")[0], app_status.split("_")[1])
 	r += '" > %s' % (pathGlob)
 
+	print("getStrings Request: " + r)
+
 	print("[+] Strings for %s" % (app_status.split("_")[0]))
 	
 	p = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
 	(output, err) = p.communicate()
 	p_status = p.wait()
 
-	if not len(listMultiSoft):
+	if not len(listMultiSoft) == 1:
 		for soft in listMultiSoft:
 			request = "grep -i %s %s > %s@%s@%s.txt" % (soft, pathGlob, cheminOut, soft, app_status.split("_")[1])
 

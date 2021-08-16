@@ -304,6 +304,8 @@ if __name__ == '__main__':
 
                     if len(listMultiSoft) == 0:
                         listMultiSoft.append(app)
+
+                    print("listMultiSoft: " + str(listMultiSoft))
                     
                     ## Run the fls command
                     OnLinux.get_Fls_Strings.fls(appchemin, allVariables.pathToStrings, app_status)
