@@ -77,14 +77,32 @@ def getUninstall(app, l_app):
         if app == b.split(":")[1].rstrip("\n"):
             alt = b.split(":")[0].rstrip("\n")
             flag = True
+            break
+
+    listMultiSoft = list()
+
+    softMulti = ""
+    flagMulti = False
+
+    with open(pathWork + "etc/MultiSoft.txt", "r") as MultiSoft:
+        lines = MultiSoft.readlines()
+        for l in lines :
+            listMultiSoft = l.split(":")
+            soft = listMultiSoft[1].split(",")
+            for s in soft:
+                if (flag and (s == alt)) or (not flag and (s == app)):
+                    softMulti = listMultiSoft[0]
+                    flagMulti = True
+                    break
     
     for l in l_app:
         loc = l.split(",")
-        if flag:
-            if alt == loc[0].split(":")[1].rstrip("\n"):
-                return loc[2].split(":")[1].rstrip("\n")
-        elif app == loc[0].split(":")[1].rstrip("\n"):
+
+        if flagMulti and (softMulti == loc[0].split(":")[1].rstrip("\n")):
             return loc[2].split(":")[1].rstrip("\n")
+
+        if (flag and (alt == loc[0].split(":")[1].rstrip("\n"))) or (not flag and (app == loc[0].split(":")[1].rstrip("\n"))):
+                return loc[2].split(":")[1].rstrip("\n")
 
 
 # Creation of yara rule for PE informations
@@ -308,7 +326,7 @@ if __name__ == '__main__':
                     print("listMultiSoft: " + str(listMultiSoft))
                     
                     ## Run the fls command
-                    OnLinux.get_Fls_Strings.fls(appchemin, allVariables.pathToStrings, app_status)
+                    OnLinux.get_Fls_Strings.fls(appchemin, allVariables.pathToStrings, app_status, listMultiSoft)
 
                     ## Run Strings command
                     OnLinux.get_Fls_Strings.getStrings(appchemin, listMultiSoft, allVariables.pathToStrings, app_status)

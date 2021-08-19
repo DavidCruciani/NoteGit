@@ -1,9 +1,10 @@
 #!/bin/python3
 
 import os
+import shutil
 import subprocess
 
-def fls(cheminMachine, cheminOut, app_status):
+def fls(cheminMachine, cheminOut, app_status, listMultiSoft):
 	## get the longer partition
 	request = "mmls -t dos %s | cut -c43-55 > %slength_partition" % (cheminMachine, cheminOut)
 	subprocess.call(request, shell=True)
@@ -34,8 +35,9 @@ def fls(cheminMachine, cheminOut, app_status):
 
 	offset = int(ls[cpmax].rstrip("\n"))
 
+	pathFls1erProg = "%s@%s@fls_%s.tree" % (cheminOut, app_status.split("_")[0], app_status.split("_")[1])
 
-	r = "fls -r -o %s %s > %s@%s@fls_%s.tree" % (str(offset), cheminMachine, cheminOut, app_status.split("_")[0], app_status.split("_")[1])
+	r = "fls -r -o %s %s > %s@%s@fls_%s.tree" % (str(offset), cheminMachine, pathFls1erProg)
 	print("[+] Fls for %s" % (app_status.split("_")[0]))
 
 	p = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
@@ -44,6 +46,12 @@ def fls(cheminMachine, cheminOut, app_status):
 	
 	f.close()
 	f2.close()
+
+	if len(listMultiSoft) > 1:
+		for l in listMultiSoft:
+			shutil.copyfile(pathFls1erProg, "%s@%s@fls_%s.tree" % (cheminOut, l, app_status.split("_")[1]))
+
+		os.remove(pathFls1erProg)
 
 	os.remove("%slength_partition" % (cheminOut))
 	os.remove("%sstart_partition" % (cheminOut))
