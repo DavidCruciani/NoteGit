@@ -439,8 +439,10 @@ if __name__ == '__main__':
             softName = content.split("@")[1]
 
             uninstaller = getUninstall(softName, l_app)
-
-            automatisation_yara.inditif(chemin, listProduct[softName], l_app, stringProg, uninstaller)
+            try:
+                automatisation_yara.inditif(chemin, listProduct[softName], l_app, stringProg, uninstaller)
+            except:
+                automatisation_yara.inditif(chemin, None, l_app, stringProg, uninstaller)
 
     # Hashlookup
     for content in os.listdir(allVariables.pathToYaraSave):
@@ -472,7 +474,7 @@ if __name__ == '__main__':
                             if not os.path.isdir(pathHashMd5):
                                 os.mkdir(pathHashMd5)
 
-                            with open(pathHashMd5 + "/" + lineSplit[-1].rstrip("\n"), "w") as fileHash:
+                            with open(pathHashMd5 + "/" + lineSplit[0].rstrip("\n"), "w") as fileHash:
                                 fileHash.write(str(jsonResponse))
                             #print(jsonResponse)
             else:

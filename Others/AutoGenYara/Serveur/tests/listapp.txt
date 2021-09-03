@@ -1,4 +1,4 @@
-chrome.exe:chrome,installer:exe
-putty.msi:putty,installer:msiexec
-readerdc.exe:AcroRd32,installer:exe
-winrar.exe:WinRAR,installer:exe
+putty.msi:putty,installer:msiexec,uninstaller:msiexec
+notepadplusplus:notepad++,installer:choco,uninstaller:choco
+googlechrome:chrome,installer:choco,uninstaller:choco
+winrar:WinRAR,installer:choco,uninstaller:choco

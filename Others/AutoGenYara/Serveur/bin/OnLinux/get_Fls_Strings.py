@@ -37,7 +37,7 @@ def fls(cheminMachine, cheminOut, app_status, listMultiSoft):
 
 	pathFls1erProg = "%s@%s@fls_%s.tree" % (cheminOut, app_status.split("_")[0], app_status.split("_")[1])
 
-	r = "fls -r -o %s %s > %s@%s@fls_%s.tree" % (str(offset), cheminMachine, pathFls1erProg)
+	r = "fls -r -o %s %s > %s" % (str(offset), cheminMachine, pathFls1erProg)
 	print("[+] Fls for %s" % (app_status.split("_")[0]))
 
 	p = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
@@ -47,11 +47,16 @@ def fls(cheminMachine, cheminOut, app_status, listMultiSoft):
 	f.close()
 	f2.close()
 
+	flag1erProg = False
+
 	if len(listMultiSoft) > 1:
 		for l in listMultiSoft:
-			shutil.copyfile(pathFls1erProg, "%s@%s@fls_%s.tree" % (cheminOut, l, app_status.split("_")[1]))
+			if not pathFls1erProg == "%s@%s@fls_%s.tree" % (cheminOut, l, app_status.split("_")[1]):
+				shutil.copyfile(pathFls1erProg, "%s@%s@fls_%s.tree" % (cheminOut, l, app_status.split("_")[1]))
+				flag1erProg = True
 
-		os.remove(pathFls1erProg)
+		if not flag1erProg:
+			os.remove(pathFls1erProg)
 
 	os.remove("%slength_partition" % (cheminOut))
 	os.remove("%sstart_partition" % (cheminOut))

@@ -86,6 +86,8 @@ def file_create_rule(chemin, file_version, l_app, stringProg, uninstaller, flag 
     f = open(chemin, "r")
     file_strings = f.readlines()
 
+    full = ""
+
     ## First Strings execute for better performance
     if stringProg:
         first = open(stringProg)
@@ -114,7 +116,7 @@ def file_create_rule(chemin, file_version, l_app, stringProg, uninstaller, flag 
         ## the file is not a tree
         if not flag:
             ## there's a file who contains some strings about a software on a vanilla machine
-            if allVariables.pathToFirstStringsMachine:
+            if full:
                 if ((not len(file_strings[i].split(" ")) > 5 and not len(file_strings[i]) > 30) \
                     or (len(file_strings[i].split(" ")) == 1 and not len(file_strings[i]) > 50)) \
                     and ((ext[1] in file_strings[i] or ext[1].lower() in file_strings[i] or ext[1].upper() in file_strings[i]) and file_strings[i] not in s) and file_strings[i] not in full:
