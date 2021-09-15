@@ -184,6 +184,8 @@ def parseAsa(asaReport, currentApp):
 
 
 if __name__ == '__main__':
+    logFile = open(pathWork + "bin/logFile.txt", "a")
+
     ## Get the new name of software and the number of them to install
     list_app_string = list()
     list_block = blockProg()
@@ -335,10 +337,15 @@ if __name__ == '__main__':
         ## Parsing of the Asa Report
         if not uninstall:
             if allVariables.pathToAsaReport:
+                logFile.write("[+] Parsing AsA Report \n")
                 print("[+] Parsing AsA Report")
                 ## Parsing
-                content = l_app[loc].split(".")[0] + "_install_Asa_compare.json"
+                content = l_app[loc].split(":")[0].split(".")[0] + "_install_Asa_compare.json"
+                logFile.write("AsaReport to search: " + content + "\n")
+
                 chemin = os.path.join(allVariables.pathToAsaReport, content)
+                logFile.write("Path to AsaReport: " + chemin + "\n")
+
                 if os.path.isfile(chemin):
                     filesed = parseAsa(chemin, nApp)
                     ## read path collect by parser
@@ -378,6 +385,8 @@ if __name__ == '__main__':
                         pathMd5 = stringPath[:-1]
 
                         savePath =  allVariables.pathToYaraSave + "/" + nApp
+                        logFile.write("savePath :" + savePath  + "\n")
+
                         if not os.path.isdir(savePath):
                             os.mkdir(savePath)
 
@@ -477,8 +486,8 @@ if __name__ == '__main__':
                             with open(pathHashMd5 + "/" + lineSplit[0].rstrip("\n"), "w") as fileHash:
                                 fileHash.write(str(jsonResponse))
                             #print(jsonResponse)
-            else:
-                print("There's no md5 file")
+            """else:
+                print("There's no md5 file")"""
 
             if os.path.isfile(sha1File):
                 with open(sha1File, "r") as sha1Read:
@@ -502,8 +511,8 @@ if __name__ == '__main__':
                             if not os.path.isdir(pathHashSha1):
                                 os.mkdir(pathHashSha1)
 
-                            with open(pathHashSha1 + "/" + lineSplit[-1].rstrip("\n"), "w") as fileHash:
+                            with open(pathHashSha1 + "/" + lineSplit[0].rstrip("\n"), "w") as fileHash:
                                 fileHash.write(str(jsonResponse))
                             #print(jsonResponse)
-            else:
-                print("There's no sha1 file")
+            """else:
+                print("There's no sha1 file")"""

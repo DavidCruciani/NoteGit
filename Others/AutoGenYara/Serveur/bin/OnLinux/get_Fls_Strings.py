@@ -68,6 +68,9 @@ def getStrings(appchemin, listMultiSoft, cheminOut, app_status):
 	for soft in listMultiSoft:
 		r += '%s |' % (soft)
 	r = r[:-1]
+	if len(listMultiSoft) == 1:
+		r = r[:-1]
+
 	pathGlob = "%s@%s@%s.txt" % (cheminOut, app_status.split("_")[0], app_status.split("_")[1])
 	r += '" > %s' % (pathGlob)
 
