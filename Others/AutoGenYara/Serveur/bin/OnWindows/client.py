@@ -132,7 +132,7 @@ if __name__ == '__main__':
                 print("[*] Installation")
                 logFile.write("[*] Installation\n")
 
-                AsACollect()
+                #AsACollect()
 
                 request = appManager(True, dic[key[1]], key[0])
                 print(request)
@@ -153,53 +153,62 @@ if __name__ == '__main__':
 
                 print("[*] Install finish\n")
                 
-                # get the path to the app
-                print("[+] Path to exe search...")
-                request = ["cd", "/", "&", "dir", "/s", "/b", "%s.exe" % (dic[key[0]])]
+                multisoft_length = len(dic[key[2]])
 
-                p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
-                (output, err) = p.communicate()
-                p_status = p.wait()
-                try:
-                    logFile.write("Path search " + output.decode() + "\n")
-                except:
-                    logFile.write("Path search " + str(output) + "\n")
+                if not multisoft_length:
+                    multisoft_length += 1
 
-                path = output.decode().split("\n")[0].rstrip("\n\r")
-                
-                
-                # copy the app on the share folder of the vm
-                print("[+] Copy exe...")
-                r = 'copy "' + path + '" ' + VarClient.pathToExeExtract
+                for i in range(0, multisoft_length):
+                    # get the path to the app
+                    print("[+] Path to exe search...")
+                    if multisoft_length == 1:
+                        request = ["cd", "/", "&", "dir", "/s", "/b", "%s.exe" % (dic[key[0]])]
+                    else:
+                        request = ["cd", "/", "&", "dir", "/s", "/b", "%s.exe" % (dic[key[0]][i])]
 
-                pCopy = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
-                (output, err) = pCopy.communicate()
-                p_status = pCopy.wait()
-                try:
-                    logFile.write("Copy Exe: " + output.decode() + "\n")
-                except:
-                    logFile.write("Copy Exe: " + str(output) + "\n")
-                
-                # run exe to have more artefacts
-                print("[+] Run exe...")
-                p = subprocess.Popen(path, stdout=subprocess.PIPE, shell=True)
+                    p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
+                    (output, err) = p.communicate()
+                    p_status = p.wait()
+                    try:
+                        logFile.write("Path search " + output.decode() + "\n")
+                    except:
+                        logFile.write("Path search " + str(output) + "\n")
 
-                time.sleep(20)
+                    path = output.decode().split("\n")[0].rstrip("\n\r")
+                    
+                    
+                    # copy the app on the share folder of the vm
+                    print("[+] Copy exe...")
+                    r = 'copy "' + path + '" ' + VarClient.pathToExeExtract
+
+                    pCopy = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
+                    (output, err) = pCopy.communicate()
+                    p_status = pCopy.wait()
+                    try:
+                        logFile.write("Copy Exe: " + output.decode() + "\n")
+                    except:
+                        logFile.write("Copy Exe: " + str(output) + "\n")
+                    
+                    # run exe to have more artefacts
+                    print("[+] Run exe...")
+                    p = subprocess.Popen(path, stdout=subprocess.PIPE, shell=True)
+
+                    time.sleep(20)
+                    
+                    # search for the pid created by the above subprocess and kill it
+                    if psutil.pid_exists(p.pid):
+                        parent = psutil.Process(p.pid)
+                        children = parent.children(recursive=True)
+                        #print(children)
+                        #child_pid = children[0].pid
+                        for child_pid in children:
+                            if psutil.pid_exists(child_pid.pid):
+                                try:
+                                    subprocess.check_output("Taskkill /PID %d /F /T" % child_pid.pid)
+                                except:
+                                    pass
                 
-                # search for the pid created by the above subprocess and kill it
-                if psutil.pid_exists(p.pid):
-                    parent = psutil.Process(p.pid)
-                    children = parent.children(recursive=True)
-                    #print(children)
-                    #child_pid = children[0].pid
-                    for child_pid in children:
-                        if psutil.pid_exists(child_pid.pid):
-                            try:
-                                subprocess.check_output("Taskkill /PID %d /F /T" % child_pid.pid)
-                            except:
-                                pass
-                
-                AsACollect()
-                AsAExport(key[0])
+                #AsACollect()
+                #AsAExport(key[0])
 
     os.system("shutdown /s /t 10")

@@ -26,6 +26,12 @@ def blockProg():
     f1.close()
     return l1
 
+def multiSoft():
+    f = open(pathWork + "etc/MultiSoft.txt", "r")
+    l = f.readlines()
+    f.close()
+    return l
+
 def callSubprocessPopen(request, shellUse = False):
     if shellUse:
         p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
@@ -48,9 +54,22 @@ def writeFile(app, uninstall):
     installer = appSplit[1].split(":")
 
     appstr = '{"%s":"%s"' % (app[0], app[1])
-    installerstr = '"%s":"%s"}' % (installer[0], installer[1].rstrip("\n"))
+    installerstr = '"%s":"%s"' % (installer[0], installer[1].rstrip("\n"))
+    multi = '"Multi":['
 
-    tmp.write(appstr + ", " + installerstr)
+    listMulti = multiSoft()
+
+    for l in listMulti:
+        lineMulti = l.split(":")
+        if lineMulti[0] == app[0].split(".")[0]:
+            for soft in lineMulti[1].split(","):
+                multi += '"%s",' % (soft.rstrip("\n"))
+            multi = multi[:-1]
+            break
+            
+    multi += "]}"
+
+    tmp.write(appstr + ", " + installerstr + ", " + multi)
     tmp.close()
 
 # Get the list of running vms
@@ -194,12 +213,11 @@ if __name__ == '__main__':
     line_count = 0
     for line in l_app:
         for block in list_block:
-            if line.split(":")[1].rstrip("\n") == block.split(":")[0]:
+            if line.split(",")[0].split(":")[1].rstrip("\n") == block.split(":")[0]:
                 list_app_string.append(block.split(":")[1].rstrip("\n"))
-                break
             else:
-                list_app_string.append(line.split(":")[1].rstrip("\n"))
-                break
+                list_app_string.append(line.split(",")[0].split(":")[1].rstrip("\n"))
+            break
         if line != "\n":
             line_count += 1
     fapp.close()
@@ -207,11 +225,37 @@ if __name__ == '__main__':
     ## Do a special strings-grep for better performance during yara generation
     stringProg = "stringProg"
     if not allVariables.LinuxVM:
-        r = 'strings %s | grep -i -E "%s' % (allVariables.pathToFirstStringsMachine, list_app_string[0].split(",")[0])
-        for i in range(1, len(list_app_string)):
-            r += " | " + list_app_string[i].split(",")[0]
+        r = 'strings %s | grep -i -E "' % (allVariables.pathToFirstStringsMachine)
+
+        flagM = False
+        multi = multiSoft()
+
+        for l in multi:
+            if l.split(":")[0] == l_app[0].split(":")[0].split(".")[0]:
+                flagM = True
+                app = l.split(":")[1].split(",")
+                for a in app:
+                    r += "%s | " % (a)
+                r = r[:-1]
+
+        if not flagM:
+            r += "%s" % (list_app_string[0])
+
+        flagM = False
+        for i in range(1, len(l_app)):
+            for l in multi:
+                if l.split(":")[0] == l_app[i].split(":")[0].split(".")[0]:
+                    flagM = True
+                    app = l.split(":")[1].split(",")
+                    for a in app:
+                        r += " | %s" % (a)
+
+            if not flagM:
+                r += " | " + list_app_string[i]
         r += '" > %s' % (stringProg)
+
         print(r)
+        
         p = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
         (output, err) = p.communicate()
         p_status = p.wait()
@@ -238,6 +282,8 @@ if __name__ == '__main__':
                 pass
 
         writeFile(l_app[loc], uninstall)
+
+        exit(0)
 
         res = runningVms()
 
