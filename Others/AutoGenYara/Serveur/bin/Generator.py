@@ -89,6 +89,7 @@ def nameApp(capp):
     return app
 
 def getUninstall(app, l_app):
+
     block = blockProg()
     flag = False
     alt = ""
@@ -116,12 +117,16 @@ def getUninstall(app, l_app):
     
     for l in l_app:
         loc = l.split(",")
+        print(loc)
+        print("loc+ " + str(loc[0].split(":")[0].split(".")[0].rstrip("\n")))
 
-        if flagMulti and (softMulti == loc[0].split(":")[1].rstrip("\n")):
+        if flagMulti and (softMulti == loc[0].split(":")[0].split(".")[0].rstrip("\n")):
+            print("first")
             return loc[2].split(":")[1].rstrip("\n")
 
-        if (flag and (alt == loc[0].split(":")[1].rstrip("\n"))) or (not flag and (app == loc[0].split(":")[1].rstrip("\n"))):
-                return loc[2].split(":")[1].rstrip("\n")
+        if (flag and (alt == loc[0].split(":")[0].split(".")[0].rstrip("\n"))) or (not flag and (app == loc[0].split(":")[0].split(".")[0].rstrip("\n"))):
+            print("second")
+            return loc[2].split(":")[1].rstrip("\n")
 
 
 # Creation of yara rule for PE informations
@@ -224,7 +229,7 @@ if __name__ == '__main__':
 
     ## Do a special strings-grep for better performance during yara generation
     stringProg = "stringProg"
-    if not allVariables.LinuxVM:
+    """if not allVariables.LinuxVM:
         r = 'strings %s | grep -i -E "' % (allVariables.pathToFirstStringsMachine)
 
         flagM = False
@@ -463,7 +468,7 @@ if __name__ == '__main__':
     try:
         shutil.rmtree(pathMnt)
     except:
-        pass
+        pass"""
     
     ## AutoGeneYara
     hexa = "" 
@@ -488,7 +493,7 @@ if __name__ == '__main__':
             listProduct[c[0]] = ProductVersion
 
     # Rule for strings and fls
-    for content in os.listdir(allVariables.pathToStrings):
+    """for content in os.listdir(allVariables.pathToStrings):
         chemin = os.path.join(allVariables.pathToStrings, content)
         if os.path.isfile(chemin):
             softName = content.split("@")[1]
@@ -532,8 +537,7 @@ if __name__ == '__main__':
                             with open(pathHashMd5 + "/" + lineSplit[0].rstrip("\n"), "w") as fileHash:
                                 fileHash.write(str(jsonResponse))
                             #print(jsonResponse)
-            """else:
-                print("There's no md5 file")"""
+
 
             if os.path.isfile(sha1File):
                 with open(sha1File, "r") as sha1Read:
@@ -559,6 +563,5 @@ if __name__ == '__main__':
 
                             with open(pathHashSha1 + "/" + lineSplit[0].rstrip("\n"), "w") as fileHash:
                                 fileHash.write(str(jsonResponse))
-                            #print(jsonResponse)
-            """else:
-                print("There's no sha1 file")"""
+                            #print(jsonResponse)"""
+

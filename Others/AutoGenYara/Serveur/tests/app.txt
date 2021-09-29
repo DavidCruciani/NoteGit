@@ -1,1 +1,2 @@
 LibreOffice.msi:soffice,installer:msiexec,uninstaller:msiexec
+putty.msi:putty,installer:msiexec,uninstaller:msiexec
