@@ -240,7 +240,7 @@ if __name__ == '__main__':
                 flagM = True
                 app = l.split(":")[1].split(",")
                 for a in app:
-                    r += "%s | " % (a)
+                    r += "%s|" % (a.rstrip("\n"))
                 r = r[:-1]
 
         if not flagM:
@@ -253,10 +253,10 @@ if __name__ == '__main__':
                     flagM = True
                     app = l.split(":")[1].split(",")
                     for a in app:
-                        r += " | %s" % (a)
+                        r += "|%s" % (a.rstrip("\n"))
 
             if not flagM:
-                r += " | " + list_app_string[i]
+                r += "|" + list_app_string[i]
         r += '" > %s' % (stringProg)
 
         print(r)

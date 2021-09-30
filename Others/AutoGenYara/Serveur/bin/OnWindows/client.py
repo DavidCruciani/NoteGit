@@ -164,7 +164,7 @@ if __name__ == '__main__':
                     if multisoft_length == 1:
                         request = ["cd", "/", "&", "dir", "/s", "/b", "%s.exe" % (dic[key[0]])]
                     else:
-                        request = ["cd", "/", "&", "dir", "/s", "/b", "%s.exe" % (dic[key[0]][i])]
+                        request = ["cd", "/", "&", "dir", "/s", "/b", "%s.exe" % (dic[key[2]][i])]
 
                     p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
                     (output, err) = p.communicate()

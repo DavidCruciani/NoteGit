@@ -13,8 +13,8 @@ pathToSDelete = "C:/Users/Administrateur/Downloads/sdelete64.exe"
 pathToCopy = "\\\VBOXSVR\\PartageVM\\string_first"
 
 #Path to Asa.exe (Disk)
-pathToAsa = "C:/Users/Administrateur/Downloads/ASA_win_2.3.146-beta/Asa.exe"
-#pathToAsa = ""
+#pathToAsa = "C:/Users/Administrateur/Downloads/ASA_win_2.3.146-beta/Asa.exe"
+pathToAsa = "C:/Users/Administrateur/Downloads/ASA_win_2.3.268/Asa.exe"
 
 #Path to the folder who will contains AsaReport (ShareFolder)
 pathToAsaReport = "\\\VBOXSVR\\PartageVM\\AsaReport\\"
