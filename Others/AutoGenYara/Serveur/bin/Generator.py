@@ -259,7 +259,7 @@ if __name__ == '__main__':
         
         p = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
         (output, err) = p.communicate()
-        p_status = p.wait()
+        p_status = p.wait()"""
 
 
     pathMnt = ""
@@ -488,7 +488,7 @@ if __name__ == '__main__':
             listProduct[c[0]] = ProductVersion
 
     # Rule for strings and fls
-    """for content in os.listdir(allVariables.pathToStrings):
+    for content in os.listdir(allVariables.pathToStrings):
         chemin = os.path.join(allVariables.pathToStrings, content)
         if os.path.isfile(chemin):
             softName = content.split("@")[1]
