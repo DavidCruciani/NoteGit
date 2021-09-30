@@ -110,22 +110,18 @@ def getUninstall(app, l_app):
             listMultiSoft = l.split(":")
             soft = listMultiSoft[1].split(",")
             for s in soft:
-                if (flag and (s == alt)) or (not flag and (s == app)):
+                if (flag and (s.rstrip("\n") == alt)) or (not flag and (s.rstrip("\n") == app)):
                     softMulti = listMultiSoft[0]
                     flagMulti = True
                     break
     
     for l in l_app:
         loc = l.split(",")
-        print(loc)
-        print("loc+ " + str(loc[0].split(":")[0].split(".")[0].rstrip("\n")))
 
         if flagMulti and (softMulti == loc[0].split(":")[0].split(".")[0].rstrip("\n")):
-            print("first")
             return loc[2].split(":")[1].rstrip("\n")
 
         if (flag and (alt == loc[0].split(":")[0].split(".")[0].rstrip("\n"))) or (not flag and (app == loc[0].split(":")[0].split(".")[0].rstrip("\n"))):
-            print("second")
             return loc[2].split(":")[1].rstrip("\n")
 
 
@@ -288,8 +284,6 @@ if __name__ == '__main__':
 
         writeFile(l_app[loc], uninstall)
 
-        exit(0)
-
         res = runningVms()
 
         request = [allVariables.VBoxManage, 'startvm', allVariables.WindowsVM, '--type', 'headless']
@@ -369,7 +363,7 @@ if __name__ == '__main__':
                     with open(pathWork + "etc/MultiSoft.txt", "r") as MultiSoft:
                         lines = MultiSoft.readlines()
                         for l in lines :
-                            if app == l.split(":")[0]:
+                            if l_app[loc % len(l_app)].split(":")[0].split(".")[0] == l.split(":")[0]:
                                 listMultiSoft = l.split(":")[1].split(",")
                                 listMultiSoft[-1] = listMultiSoft[-1].rstrip("\n")
 
@@ -377,12 +371,12 @@ if __name__ == '__main__':
                         listMultiSoft.append(app)
 
                     print("listMultiSoft: " + str(listMultiSoft))
-                    
+               
                     ## Run the fls command
-                    OnLinux.get_Fls_Strings.fls(appchemin, allVariables.pathToStrings, app_status, listMultiSoft)
+                    OnLinux.get_Fls_Strings.fls(appchemin, allVariables.pathToStrings, app_status, listMultiSoft, logFile)
 
                     ## Run Strings command
-                    OnLinux.get_Fls_Strings.getStrings(appchemin, listMultiSoft, allVariables.pathToStrings, app_status)
+                    OnLinux.get_Fls_Strings.getStrings(appchemin, listMultiSoft, allVariables.pathToStrings, app_status, logFile)
 
 
         ## Parsing of the Asa Report
@@ -460,15 +454,16 @@ if __name__ == '__main__':
             uninstall = True
         else:
             uninstall = False
-
+            
         ## Suppression of the current raw disk
         os.remove(convert_file)
+
 
     ## Suppression of mount folder
     try:
         shutil.rmtree(pathMnt)
     except:
-        pass"""
+        pass
     
     ## AutoGeneYara
     hexa = "" 
