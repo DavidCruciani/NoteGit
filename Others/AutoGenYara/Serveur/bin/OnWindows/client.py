@@ -1,6 +1,8 @@
 import os
+import re
 import ast
 import glob
+from sys import version
 import time
 import shutil
 import psutil
@@ -9,7 +11,7 @@ import subprocess
 
 # put client.exe in the startup folder, "Windows" + "r" and "shell:startup"
 
-logFile = open("\\\VBOXSVR\\PartageVM\\logClient.txt", "a")
+logFile = open("\\\VBOXSVR\\ShareFolder_VM\\logClient.txt", "a")
 
 ## Prepare the request depending on the installer
 def appManager(status, installer, app):
@@ -100,6 +102,22 @@ def AsAExport(app):
             except OSError as e:
                 print("Error: %s : %s" % (f, e.strerror))
 
+def collectSysteminfo():
+    request = "systeminfo"
+    p = subprocess.Popen(request, stdout=subprocess.PIPE, shell=True)
+    (output, err) = p.communicate()
+    p_status = p.wait()
+
+    SystemVersion = output.decode("cp850").split("\n")[3]
+    SystemName = output.decode("cp850").split("\n")[2]
+
+    x = re.search(r" {2,}(?P<version>.*)", SystemVersion)
+    y = re.search(r" {2,}(?P<name>.*)", SystemName)
+
+    with open(VarClient.pathToSysInfo, "w") as write_file:
+        write_file.write(x.group("version") + "\n")
+        write_file.write(y.group("name"))
+
     
 
 if __name__ == '__main__':
@@ -131,6 +149,8 @@ if __name__ == '__main__':
             else:
                 print("[*] Installation")
                 logFile.write("[*] Installation\n")
+
+                collectSysteminfo()
 
                 #AsACollect()
 

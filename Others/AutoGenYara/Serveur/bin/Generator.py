@@ -18,6 +18,12 @@ import allVariables
 import automatisation_yara
 import OnLinux.get_Fls_Strings
 
+#For feed option
+import glob
+import hashlib
+import ssdeep
+import tlsh
+
 
 # Load of the block list for the name of software
 def blockProg():
@@ -284,9 +290,9 @@ if __name__ == '__main__':
 
         writeFile(l_app[loc], uninstall)
 
-        res = runningVms()
+        """res = runningVms()
 
-        request = [allVariables.VBoxManage, 'startvm', allVariables.WindowsVM, '--type', 'headless']
+        request = [allVariables.VBoxManage, 'startvm', allVariables.WindowsVM]
         if not allVariables.WindowsVM in res.stdout.decode():
             ## Start windows machine
             print("[+] Windows Start")
@@ -307,7 +313,7 @@ if __name__ == '__main__':
             print("\rTime spent: %s min" % (cptime), end="")
             res = runningVms()
 
-        print("\n[+] Windows stop\n")
+        print("\n[+] Windows stop\n")"""
 
 
         ## Convert windows machine into raw format
@@ -373,10 +379,10 @@ if __name__ == '__main__':
                     print("listMultiSoft: " + str(listMultiSoft))
                
                     ## Run the fls command
-                    OnLinux.get_Fls_Strings.fls(appchemin, allVariables.pathToStrings, app_status, listMultiSoft, logFile)
+                    #OnLinux.get_Fls_Strings.fls(appchemin, allVariables.pathToStrings, app_status, listMultiSoft, logFile)
 
                     ## Run Strings command
-                    OnLinux.get_Fls_Strings.getStrings(appchemin, listMultiSoft, allVariables.pathToStrings, app_status, logFile)
+                    #OnLinux.get_Fls_Strings.getStrings(appchemin, listMultiSoft, allVariables.pathToStrings, app_status, logFile)
 
 
         ## Parsing of the Asa Report
@@ -406,6 +412,47 @@ if __name__ == '__main__':
                     print("\t[+] Mount")
                     request = "sudo mount -o loop,ro,noexec,noload,offset=$((512*104448)) " + convert_file + " " + pathMnt
                     callSubprocessPopen(request, True)
+
+
+                    #Special part to feed Hashlookup
+                    if allVariables.FeedHashlookup != 'N':
+                        data = []
+                        sysinfofile = open(allVariables.pathToSysInfo, "r")
+                        sysinfo = sysinfofile.readlines()
+                        sysinfofile.close()
+                        SysVersion = sysinfo[0].rstrip("\n")
+                        SysName = sysinfo[1].rstrip("\n")
+                        
+                        for filename in glob.glob(pathMnt + '**/**', recursive=True):
+                            #print(filename)
+                            if not os.path.isdir(filename):
+                                try:
+                                    md5Glob = hashlib.md5(open(filename, 'rb').read()).hexdigest()
+                                    sha1Glob = hashlib.sha1(open(filename, 'rb').read()).hexdigest()
+                                    sha256Glob = hashlib.sha256(open(filename, 'rb').read()).hexdigest()
+                                    sha512Glob = hashlib.sha512(open(filename, 'rb').read()).hexdigest()
+                                    tlshGlob = tlsh.hash(open(filename, 'rb').read())
+                                    ssdeepGlob = ssdeep.hash(open(filename, 'rb').read())
+
+                                    data.append(
+                                        {
+                                            'FileName': filename,
+                                            'FileSize': os.path.getsize(filename),
+                                            'Windows:Version': SysVersion,
+                                            'Windows:OS': SysName,
+                                            'md5': md5Glob,
+                                            'sha-1': sha1Glob,
+                                            'sha-256': sha256Glob,
+                                            'sha-512': sha512Glob,
+                                            'tlsh': tlshGlob,
+                                            'ssdeep': ssdeepGlob
+                                        }
+                                    )
+                                except OSError:
+                                    pass
+                        with open(allVariables.pathToFeedHashlookup, 'w') as outfile:
+                            json.dump(data, outfile, indent=4)
+
 
                     ## md5 for each file of AsaPath
                     print("\t[+] Md5 Asa")
@@ -466,7 +513,7 @@ if __name__ == '__main__':
         pass
     
     ## AutoGeneYara
-    hexa = "" 
+    """hexa = "" 
     ProductVersion = ""
     listProduct = dict()
     # Rule for Exe

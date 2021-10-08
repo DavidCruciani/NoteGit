@@ -1,48 +1,57 @@
 #Path to the list that contains software to install: "nameOfPackage":"nameOfExe"
 #applist = "B:\\git\\NoteGit\\Others\\AutoGenYara\\Serveur\\tests\listapp.txt"
-applist = "B:\\git\\NoteGit\\Others\\AutoGenYara\\Serveur\\tests\\app.txt"
+applist = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/AutoGene/tests/app.txt"
 
-pathToInstaller = "B:\VM\PartageVM\Installer"
+pathToInstaller = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/ShareFolder_VM/Installer"
 
 #Path to VBoxManage
-VBoxManage = "C:\\Program Files\Oracle\VirtualBox\VBoxManage.exe"
+VBoxManage = "VBoxManage"
 
 #UUID of Windows VM
-WindowsVM = "{235f9214-e871-4b75-b091-c90e53b32974}"
+WindowsVM = "{4c2ee5e4-483a-40c8-86df-68ffb9cb1a76}"
 #Path to Windows VM
-pathToWindowsVM = "C:\\Users\David\Downloads\VM\PXE - Windows 10 _Cible_\PXE - Windows 10 [Cible]-disk001.vmdk"
+pathToWindowsVM = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/Windows10/10Win.vmdk"
 #Path to folder share with Windows VM
-pathToShareWindows = "B:\VM\PartageVM\exe_extract"
+pathToShareWindows = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/ShareFolder_VM/exe_extract"
 
 #UUID of Linux VM
-LinuxVM = "{9f5f2d55-619b-490c-9225-a6ee4945fd5e}"
+LinuxVM = ""
 
 #Path to qemu to convert VM into raw format
-qemu = "B:\Téléchargement\Logiciel\qemu-img-win-x64-2_3_0\qemu-img.exe"
+qemu = "qemu-img"
 
 #Path to folder who will contain vm in raw format
-pathToConvert = "B:\VM\PartageVM\convert\\"
+pathToConvert = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/ShareFolder_VM/convert/"
 #Path to strings after linux execution
-pathToStrings = "B:\VM\PartageVM\Strings_out\\"
+pathToStrings = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/ShareFolder_VM/Strings_out/"
 
 #Path to xxd
-xxd = "B:\\Téléchargement\\Logiciel\\linux_command\\xxd.exe"
+xxd = "xxd"
 #Path to cut
-cut = "B:\\Téléchargement\\Logiciel\\linux_command\\cut.exe"
+cut = "cut"
 #Path to sed
-sed = "B:\\Téléchargement\\Logiciel\\linux_command\\sed.exe"
+sed = "sed"
 #Path to curl
 curl = "curl"
 
 #Path to strings of Windows VM without software install
 # pathToFirstStringsMachine = "C:\\Users\David\Desktop\Stage Circl\Python Prog\\first_machine_strings"
-pathToFirstStringsMachine = "B:\\VM\\PartageVM\\Windows10_first\\string_first_7zip"
+pathToFirstStringsMachine = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/string_first"
 
 #Path to fls output of Windows VM without software install
-pathToFirstFls = "C:\\Users\David\Desktop\Stage Circl\Python Prog\\fls_first"
+pathToFirstFls = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/fls_first"
 
 #Path to save yara rule on pc
-pathToYaraSave = "B:\Téléchargement\Yara"
+pathToYaraSave = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/Yara"
 
 #Path to the folder who will contains AsaReport
-pathToAsaReport = ""
+pathToAsaReport = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/ShareFolder_VM/AsaReport"
+
+#Option, feed hashlookup, default: N, possibility: N, Y
+FeedHashlookup = "Y"
+
+#Path to save the result to feed hashlookup
+pathToFeedHashlookup = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/HashValue.txt"
+
+#Path to result of systeminfo
+pathToSysInfo = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/ShareFolder_VM/sysinfo.txt"
