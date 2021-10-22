@@ -387,6 +387,77 @@ if __name__ == '__main__':
 
         ## Parsing of the Asa Report
         if not uninstall:
+            ## create mount directory
+            pathMnt = "./mnt_convert"
+            if not os.path.isdir(pathMnt):
+                os.mkdir(pathMnt)
+
+            #Special part to feed Hashlookup
+            if allVariables.FeedHashlookup != 'N':
+
+                print("[+] Feed Hahlookup setup")
+                
+                ## mount the convert image
+                print("\t[+] Mount")
+                request = "sudo mount -o loop,ro,noexec,noload,offset=$((512*104448)) %s %s" % (convert_file, pathMnt)
+                callSubprocessPopen(request, True)
+
+                intermediate_file = "./intermediate_file" 
+                print("\t[+] List of all files")
+                request = "find %s -type f > %s" % (pathMnt, intermediate_file)
+                callSubprocessPopen(request, True)
+
+                #exit(0)
+
+                data = []
+                sysinfofile = open(allVariables.pathToSysInfo, "r")
+                sysinfo = sysinfofile.readlines()
+                sysinfofile.close()
+                SysVersion = sysinfo[0].rstrip("\n")
+                SysName = sysinfo[1].rstrip("\n")
+                
+                with open(intermediate_file, 'r') as read_file:
+                    for line in read_file.readlines():
+                        filename = os.path.normpath(line.rstrip("\n"))
+
+                        if not os.path.isdir(filename):
+                            try:                                
+                                md5Glob = hashlib.md5(open(filename, 'rb').read()).hexdigest()
+                                sha1Glob = hashlib.sha1(open(filename, 'rb').read()).hexdigest()
+                                sha256Glob = hashlib.sha256(open(filename, 'rb').read()).hexdigest()
+                                sha512Glob = hashlib.sha512(open(filename, 'rb').read()).hexdigest()
+                                tlshGlob = tlsh.hash(open(filename, 'rb').read())
+                                ssdeepGlob = ssdeep.hash(open(filename, 'rb').read())
+
+                                l = line.split("/")
+                                nameFile = ""
+                                for i in range(2,len(l)):
+                                    nameFile += l[i] + "/"
+                                nameFile = nameFile[:-1]
+
+
+                                data.append(
+                                    {
+                                        'FileName': nameFile.rstrip("\n"),
+                                        'FileSize': os.path.getsize(filename),
+                                        'Windows:Version': SysVersion,
+                                        'Windows:OS': SysName,
+                                        'md5': md5Glob,
+                                        'sha-1': sha1Glob,
+                                        'sha-256': sha256Glob,
+                                        'sha-512': sha512Glob,
+                                        'tlsh': tlshGlob,
+                                        'ssdeep': ssdeepGlob
+                                    }
+                                )
+                            except OSError as err:
+                                #print(err)
+                                pass
+                with open(allVariables.pathToFeedHashlookup + "/" + nApp + ".txt", 'w') as outfile:
+                    json.dump(data, outfile, indent=4)
+
+                os.remove(intermediate_file)
+
             if allVariables.pathToAsaReport:
                 logFile.write("[+] Parsing AsA Report \n")
                 print("[+] Parsing AsA Report")
@@ -403,56 +474,10 @@ if __name__ == '__main__':
                     with open(filesed, "r") as read_file:
                         AsaPath = read_file.readlines()
 
-                    ## create mount directory
-                    pathMnt = "./mnt_convert"
-                    if not os.path.isdir(pathMnt):
-                        os.mkdir(pathMnt)
-
                     ## mount the convert image
                     print("\t[+] Mount")
                     request = "sudo mount -o loop,ro,noexec,noload,offset=$((512*104448)) " + convert_file + " " + pathMnt
                     callSubprocessPopen(request, True)
-
-
-                    #Special part to feed Hashlookup
-                    if allVariables.FeedHashlookup != 'N':
-                        data = []
-                        sysinfofile = open(allVariables.pathToSysInfo, "r")
-                        sysinfo = sysinfofile.readlines()
-                        sysinfofile.close()
-                        SysVersion = sysinfo[0].rstrip("\n")
-                        SysName = sysinfo[1].rstrip("\n")
-                        
-                        for filename in glob.glob(pathMnt + '**/**', recursive=True):
-                            #print(filename)
-                            if not os.path.isdir(filename):
-                                try:
-                                    md5Glob = hashlib.md5(open(filename, 'rb').read()).hexdigest()
-                                    sha1Glob = hashlib.sha1(open(filename, 'rb').read()).hexdigest()
-                                    sha256Glob = hashlib.sha256(open(filename, 'rb').read()).hexdigest()
-                                    sha512Glob = hashlib.sha512(open(filename, 'rb').read()).hexdigest()
-                                    tlshGlob = tlsh.hash(open(filename, 'rb').read())
-                                    ssdeepGlob = ssdeep.hash(open(filename, 'rb').read())
-
-                                    data.append(
-                                        {
-                                            'FileName': filename,
-                                            'FileSize': os.path.getsize(filename),
-                                            'Windows:Version': SysVersion,
-                                            'Windows:OS': SysName,
-                                            'md5': md5Glob,
-                                            'sha-1': sha1Glob,
-                                            'sha-256': sha256Glob,
-                                            'sha-512': sha512Glob,
-                                            'tlsh': tlshGlob,
-                                            'ssdeep': ssdeepGlob
-                                        }
-                                    )
-                                except OSError:
-                                    pass
-                        with open(allVariables.pathToFeedHashlookup, 'w') as outfile:
-                            json.dump(data, outfile, indent=4)
-
 
                     ## md5 for each file of AsaPath
                     print("\t[+] Md5 Asa")
@@ -488,13 +513,13 @@ if __name__ == '__main__':
                         request = "sha1sum " + pathMd5 + " >> " + savePath + "/" + nApp + "_sha1"
                         callSubprocessPopen(request, True)
 
-                    ## umount the convert image
-                    print("\t[+] Umount")
-                    request = "sudo umount " + pathMnt
-                    callSubprocessPopen(request, True)
-
                     ## Delete Asa path 
                     os.remove(filesed)
+
+            ## umount the convert image
+            print("\t[+] Umount")
+            request = "sudo umount " + pathMnt
+            callSubprocessPopen(request, True)
 
         if i % 2 == 0:
             j += 1

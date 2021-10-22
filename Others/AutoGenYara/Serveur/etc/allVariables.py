@@ -8,7 +8,7 @@ pathToInstaller = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/ShareF
 VBoxManage = "VBoxManage"
 
 #UUID of Windows VM
-WindowsVM = "{4c2ee5e4-483a-40c8-86df-68ffb9cb1a76}"
+WindowsVM = "{4ca801cb-38ba-4b3b-b694-f77ed0a3c372}"
 #Path to Windows VM
 pathToWindowsVM = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/Windows10/10Win.vmdk"
 #Path to folder share with Windows VM
@@ -45,13 +45,14 @@ pathToFirstFls = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/fls_fir
 pathToYaraSave = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/Yara"
 
 #Path to the folder who will contains AsaReport
-pathToAsaReport = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/ShareFolder_VM/AsaReport"
+#pathToAsaReport = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/ShareFolder_VM/AsaReport"
+pathToAsaReport = ""
 
 #Option, feed hashlookup, default: N, possibility: N, Y
 FeedHashlookup = "Y"
 
 #Path to save the result to feed hashlookup
-pathToFeedHashlookup = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/HashValue.txt"
+pathToFeedHashlookup = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/AutoGene/bin"
 
 #Path to result of systeminfo
 pathToSysInfo = "/home/dacru/Desktop/WorkSpace/Rule_Generator_WorkSpace/ShareFolder_VM/sysinfo.txt"
