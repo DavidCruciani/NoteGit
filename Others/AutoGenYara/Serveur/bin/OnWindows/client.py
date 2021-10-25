@@ -11,7 +11,7 @@ import subprocess
 
 # put client.exe in the startup folder, "Windows" + "r" and "shell:startup"
 
-logFile = open("\\\VBOXSVR\\ShareFolder_VM\\logClient.txt", "a")
+logFile = open(VarClient.pathToLogclient, "a")
 
 ## Prepare the request depending on the installer
 def appManager(status, installer, app):
@@ -152,7 +152,7 @@ if __name__ == '__main__':
 
                 collectSysteminfo()
 
-                #AsACollect()
+                AsACollect()
 
                 request = appManager(True, dic[key[1]], key[0])
                 print(request)
@@ -228,7 +228,7 @@ if __name__ == '__main__':
                                 except:
                                     pass
                 
-                #AsACollect()
-                #AsAExport(key[0])
+                AsACollect()
+                AsAExport(key[0])
 
     os.system("shutdown /s /t 10")
