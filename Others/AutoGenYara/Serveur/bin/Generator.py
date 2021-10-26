@@ -439,7 +439,7 @@ if __name__ == '__main__':
                                 data.append(
                                     {
                                         'FileName': nameFile.rstrip("\n"),
-                                        'FileSize': os.path.getsize(filename),
+                                        'FileSize': str(os.path.getsize(filename)),
                                         'Windows:Version': SysVersion,
                                         'Windows:OS': SysName,
                                         'md5': md5Glob,
@@ -483,7 +483,9 @@ if __name__ == '__main__':
                     print("\t[+] Md5 Asa")
                     for pathMd5 in AsaPath:
                         pathMd5 = pathMnt + "/" + pathMd5.split(":")[1].rstrip("\n")[1:]
-                        pathMd5 = re.sub(r"\\","/", pathMd5)
+
+                        pathMd5 = os.path.normpath(pathMd5)
+                        """pathMd5 = re.sub(r"\\","/", pathMd5)
                         pathMd5 = pathMd5.split("/")
 
                         ## Add "" for each folder who contains space caracters
@@ -499,7 +501,7 @@ if __name__ == '__main__':
                         for sp in pathMd5:
                             stringPath += sp + "/"
 
-                        pathMd5 = stringPath[:-1]
+                        pathMd5 = stringPath[:-1]"""
 
                         savePath =  allVariables.pathToYaraSave + "/" + nApp
                         logFile.write("savePath :" + savePath  + "\n")
