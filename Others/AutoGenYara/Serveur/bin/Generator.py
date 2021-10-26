@@ -231,7 +231,7 @@ if __name__ == '__main__':
 
     ## Do a special strings-grep for better performance during yara generation
     stringProg = "stringProg"
-    """if not allVariables.LinuxVM:
+    if not allVariables.LinuxVM:
         r = 'strings %s | grep -i -E "' % (allVariables.pathToFirstStringsMachine)
 
         flagM = False
@@ -261,11 +261,11 @@ if __name__ == '__main__':
                 r += "|" + list_app_string[i]
         r += '" > %s' % (stringProg)
 
-        print(r)
+        print("[+] First strings command for better performance...")
         
         p = subprocess.Popen(r, stdout=subprocess.PIPE, shell=True)
         (output, err) = p.communicate()
-        p_status = p.wait()"""
+        p_status = p.wait()
 
 
     pathMnt = ""
@@ -290,7 +290,7 @@ if __name__ == '__main__':
 
         writeFile(l_app[loc], uninstall)
 
-        """res = runningVms()
+        res = runningVms()
 
         request = [allVariables.VBoxManage, 'startvm', allVariables.WindowsVM]
         if not allVariables.WindowsVM in res.stdout.decode():
@@ -313,7 +313,7 @@ if __name__ == '__main__':
             print("\rTime spent: %s min" % (cptime), end="")
             res = runningVms()
 
-        print("\n[+] Windows stop\n")"""
+        print("\n[+] Windows stop\n")
 
 
         ## Convert windows machine into raw format
@@ -538,7 +538,7 @@ if __name__ == '__main__':
         pass
     
     ## AutoGeneYara
-    """hexa = "" 
+    hexa = "" 
     ProductVersion = ""
     listProduct = dict()
     # Rule for Exe
@@ -630,5 +630,5 @@ if __name__ == '__main__':
 
                             with open(pathHashSha1 + "/" + lineSplit[0].rstrip("\n"), "w") as fileHash:
                                 fileHash.write(str(jsonResponse))
-                            #print(jsonResponse)"""
+                            #print(jsonResponse)
 
