@@ -431,8 +431,8 @@ if __name__ == '__main__':
 
                                 l = line.split("/")
                                 nameFile = ""
-                                for i in range(2,len(l)):
-                                    nameFile += l[i] + "/"
+                                for inter in range(2,len(l)):
+                                    nameFile += l[inter] + "/"
                                 nameFile = nameFile[:-1]
 
 
