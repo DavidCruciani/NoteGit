@@ -453,7 +453,7 @@ if __name__ == '__main__':
                             except OSError as err:
                                 #print(err)
                                 pass
-                with open(allVariables.pathToFeedHashlookup + "/" + nApp + ".txt", 'w') as outfile:
+                with open(allVariables.pathToFeedHashlookup + "/" + nApp + ".json", 'w') as outfile:
                     json.dump(data, outfile, indent=4)
 
                 os.remove(intermediate_file)
