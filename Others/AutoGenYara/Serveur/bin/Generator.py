@@ -580,6 +580,7 @@ if __name__ == '__main__':
             md5File = pathFolder + "/" + content + "_md5"
             sha1File = pathFolder + "/" + content + "_sha1"
 
+            print("\n[+] Hashlookup")
             if os.path.isfile(md5File):
                 with open(md5File, "r") as md5Read:
                     lines = md5Read.readlines()
@@ -592,9 +593,7 @@ if __name__ == '__main__':
 
                         jsonResponse = json.loads(output.decode())
 
-                        if "message" in jsonResponse.keys():
-                            print(jsonResponse["message"])
-                        else:
+                        if not "message" in jsonResponse.keys():
                             pathHash = os.path.join(pathFolder, "HashLookup")
                             pathHashMd5 = os.path.join(pathHash, "md5")
 
@@ -619,9 +618,7 @@ if __name__ == '__main__':
 
                         jsonResponse = json.loads(output.decode())
 
-                        if "message" in jsonResponse.keys():
-                            print(jsonResponse["message"])
-                        else:
+                        if not "message" in jsonResponse.keys():
                             pathHash = os.path.join(pathFolder, "HashLookup")
                             pathHashSha1 = os.path.join(pathHash, "sha1")
 
