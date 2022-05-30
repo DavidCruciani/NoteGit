@@ -443,6 +443,14 @@ du -sh /path/to/folder
 
 
 
+execute a command for each line of a file
+
+~~~bash
+while read in; do git clone "$in"; done < file.txt
+~~~
+
+
+
 ##### sed
 
 delete line that match pattern `u` in file 
@@ -470,6 +478,18 @@ source pythonregrip/bin/activate
 #Pour le désactiver
 deactivate
 ```
+
+
+
+##### Redis
+
+get all keys and values from redis db
+
+~~~~bash
+for i in $(redis-cli KEYS '*'); do echo $i; redis-cli GET $i; done > out.txt
+~~~~
+
+
 
 
 
