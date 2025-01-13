@@ -23,7 +23,9 @@ https://www.circl.lu/services/forensic-training-materials/
 - Parler avec les personnes et prendre des notes
 
 - identifier les sources possible de preuve: les ordi, les imprimantes....
+
 - dump mémoire
+
 - image du systeme
 
 ##### Analyse
@@ -34,8 +36,6 @@ https://www.circl.lu/services/forensic-training-materials/
 - <u>OS layer</u>: registry, prefetch files
 - <u>Application layer</u>: AV log, browser history...
 - <u>Identify malware</u>: Temp or Startup folders, windows task
-
-
 
 ##### Binaire
 
@@ -51,29 +51,19 @@ https://www.circl.lu/services/forensic-training-materials/
 
 <u>Little Endian</u>: 0-15 (poids fort à droite)
 
-
-
 ##### Disk
 
 HPA (*Host Protected Area*): Recovery data. persistent data, READ NATIVE MAX ADDRESS
 
 DCO (Device Configuration Overlay): Control reported capacity and disk features, DEVICE CONFIGURATION IDENTIFY
 
-
-
 HPA peut contenir des info caché inaccesible par l'os mais récupérable avec des outils.
 
 Il faut utiliser les hash pour savoir si le disk a changé ou non pares une modification
 
-
-
 Un hardware write blocker empeche les attaques contrairement à des outils comme hdparm ou blockdev
 
-
-
 `dd, if=source, of=dest, bs=block_size, count=nb_block_cp, skip=ignor_block_entree, seek=ignore_block_sorti, conv=noerror(continue malgré tout) `
-
-
 
 ### https://www.circl.lu/assets/files/forensics-102.pdf
 
@@ -89,19 +79,11 @@ Fichier supprimé:
 
 <img src="C:\Users\Matthias\git\NoteGit\image_readme\image-20210402083608185.png" alt="image-20210402083608185" style="zoom:67%;" />
 
-
-
 <img src="C:\Users\Matthias\git\NoteGit\image_readme\image-20210402083727451.png" alt="image-20210402083727451" style="zoom:67%;" />
-
-
 
 `dd  if=deleted.dd  of=file2.txt  bs=32  skip=7122  count=2     --> This is Paula`
 
 `dd  if=deleted.dd  of=file1.txt  bs=32  skip=7123  count=2     --> Paula World`
-
-
-
-
 
 Structure de **FAT** :
 
@@ -109,51 +91,41 @@ Structure de **FAT** :
 
 <img src="C:\Users\Matthias\git\NoteGit\image_readme\image-20210402090136587.png" alt="image-20210402090136587" style="zoom:67%;" />
 
-
-
 Structure de **NTFS**:
 
 <img src="C:\Users\Matthias\git\NoteGit\image_readme\image-20210402090317043.png" alt="image-20210402090317043" style="zoom:67%;" />
 
 En **NTFS** tout est fichier
 
-
-
 **MFT**: 1 record par fichier/dossier et chaque record=1024 bytes
 
 <img src="C:\Users\Matthias\git\NoteGit\image_readme\image-20210402092117993.png" alt="image-20210402092117993" style="zoom:67%;" />
-
-
 
 **$Bitmap** localisé au record 6 de MFT, il contient le status de chaque cluster (allocated or not), chaque bit represente 1 cluster
 
 Byte 1: 0x13 == 0001  0100   -->  Cluster alloué: 3, 5
 
-​												   --> Cluster non alloué: 1, 2, 4, 6, 7, 8
+​                                                   --> Cluster non alloué: 1, 2, 4, 6, 7, 8
 
 pour le cluster 4169:  4169 / 8 == 521.125    --> dans $Bitmap il faut donc regarder au byte 521 pour avoir ce cluster
 
 si le fichier n'est pas supprimé:  1111  1111 et supprimé:  1110   0001
 
-
-
 ##### Timestamps
 
 - FAT
-    - Mac
-        - M: Content last Modified
-        - A: Content last Accessed
-        - C: File Created
+  - Mac
+    - M: Content last Modified
+    - A: Content last Accessed
+    - C: File Created
 - NTFS
-    - MACE or MACB
-        - M: Content last Modified
-        - A: Content last Accessed
-        - C: File Created
-        - E: MFT Entry last modified
+  - MACE or MACB
+    - M: Content last Modified
+    - A: Content last Accessed
+    - C: File Created
+    - E: MFT Entry last modified
 
 command: `mactime`
-
-
 
 ##### Magic Bytes
 
@@ -161,19 +133,13 @@ Les données doivent etre séquentielles, si elles sont fragmentées, elles peuv
 
 un byte peut permettre d'identifier le fichier en cours d'analyse avec des en-tete défini et des fins définis aussi.
 
-
-
 ##### String Search
 
 consiste a chercher des chaines de caractère lisible humainement, des formats, email, url, ip, bank
 
-
-
 ##### Resident, non resident
 
 A file is resident if it is the primary copy of the file (as opposed to a backup copy) and it is stored on disk, regardless of whether the disk is online. A file is nonresident if it is stored only on a backup tape or if the file is a backup copy that is stored on another disk family.
-
-
 
 ### https://www.circl.lu/assets/files/forensics-103.pdf
 
@@ -182,45 +148,39 @@ A file is resident if it is the primary copy of the file (as opposed to a backup
 ##### Registry
 
 - SAM
-
-    - Local users
+  
+  - Local users
 
 - Security
-
-    - Audit settings
+  
+  - Audit settings
 
 - System
-
-    - General system config
-    - Program execution
+  
+  - General system config
+  - Program execution
 
 - Software
-
-    - Windows version, Profiles list
-    - Scheduled Tasks
-    - Program execution
-
-    
+  
+  - Windows version, Profiles list
+  - Scheduled Tasks
+  - Program execution
 
 **RegRipper** permet d'analyser les registres
-
-
 
 ###### User Hive
 
 - Auto Start
-    - Run
-    - RunOnce
+  - Run
+  - RunOnce
 - Applications installed & uninstalled
 - WordWheelQuery
-    - user search on localhst
+  - user search on localhst
 - Shell Bags
-    - user preferences
+  - user preferences
 - UserAssist
-    - User Activities
+  - User Activities
 - RecentDocs
-
-
 
 #### Windows Event Logs
 
@@ -230,40 +190,32 @@ Event viewer, Event log Explorer, evtxexport (command line), evtx dump.py
 
 Location: `/Windows/System32/winevt/Logs/` -->  `Security.evtx System.evtx Application.evtx`
 
-
-
 ##### Recycle.bin
 
 `strings -el $NameOfFile` permet de récupérer le chemin jusqu'au fichier avant suppression
 
 `type $NameOfFile` permet de faire la même chose (Windows)
 
-
-
 ##### LNK Files
 
 Donne des information sur l'accès aux fichiers
 
-
-
 ##### XP Restore Points
 
 - Backup of: 
-    - Critical system files
-    - Registry partially
-    - Local user profiles 
-    - But NO user data
+  - Critical system files
+  - Registry partially
+  - Local user profiles 
+  - But NO user data
 - Created automatically: 
-    - Every 24 hours 
-    - Windows Update 
-    - Installation of applications incl. driver
+  - Every 24 hours 
+  - Windows Update 
+  - Installation of applications incl. driver
 - For analyst
-    - rp.log
-    - Description of the cause
-    - Time stamp
-    - State of the system at different times
-
-
+  - rp.log
+  - Description of the cause
+  - Time stamp
+  - State of the system at different times
 
 ##### VSS - Volume Shadow Copy Service
 
@@ -272,8 +224,6 @@ Backup service:
 - System files
 - User data files
 - Operates on block level
-
-
 
 ##### Prefetch Files
 
@@ -284,8 +234,6 @@ Permet de prouver qu'une application a bien été lancée.
 
 Location: `/Windows/Prefetch`
 
-
-
 Information inside prefetch file:
 
 - Run count: How often launched
@@ -295,8 +243,6 @@ Information inside prefetch file:
 
 analyse with tool like `prefetch.py`
 
-
-
 ##### Jump list
 
 Similaire à `RecentDocs`
@@ -305,13 +251,9 @@ Document pour une application ouverte récemment
 
 Location: `AppData/Roaming/Microsoft/Windows/Recent/AutomaticDestinations`
 
-
-
 Le nom des fichiers finissent par: `.automaticDextinations-ms`  --> `918e0ecb43d17e23.automaticDextinations-ms`
 
 Les valeurs Hexa sont définis mondialement  --> `918e0ecb43d17e23 = Notepad.exe`
-
-
 
 #### Basic Malware Analysis
 
@@ -321,16 +263,12 @@ Les valeurs Hexa sont définis mondialement  --> `918e0ecb43d17e23 = Notepad.exe
 2. PE Header
 3. OPtional Header
 4. Section Headers
-5.  *.text* Section ( Program Code ) 
-6.  *.idata* Section ( Importd Libs )
-7.  *.rsrc* Section ( Strings, Images, ... ) 
-8.  *.reloc* Section (Memory Translation ) 
-
-
+5. *.text* Section ( Program Code ) 
+6. *.idata* Section ( Importd Libs )
+7. *.rsrc* Section ( Strings, Images, ... ) 
+8. *.reloc* Section (Memory Translation ) 
 
 tools useful: `file, efixtool, strings, virustotal, misp, Circl DMA`
-
-
 
 #### Analysing files
 
@@ -338,41 +276,34 @@ tools useful Standard Linux: `file, efixtool, strings,md5sum, sha1sum, 7z`
 
 Dedicated tools: `oledump.py,pdfid.py, pdf-parser.py, VirusTotal tools`
 
-
-
 #### Live Response
 
 ##### Volatile Data
 
 Memory dump
 
-
-
 - System Time
-    - `date /t & time /t`
+  - `date /t & time /t`
 - Loggedon Users
-    - `net session`
-    - `PsLoggedon.exe`
-    - `logonsessions.exe`
+  - `net session`
+  - `PsLoggedon.exe`
+  - `logonsessions.exe`
 - Open files
-    - `net file`
+  - `net file`
 - Network Connections and Status
-    - `netstat -anob, -rn`
+  - `netstat -anob, -rn`
 - Running Processes
-    - `tasklist`
+  - `tasklist`
 - Command history
-    - `doskey /history`
-
-
+  - `doskey /history`
 
 #### Memory Forensics
 
 - Dumpit (do the dump)
 
 - Redline
+
 - Volatility
-
-
 
 ### https://forensicswiki.xyz/wiki/index.php?title=Prefetch
 
@@ -387,16 +318,12 @@ Les fichiers Prefetch contiennent :
 
 **<u>Attention:</u>**  Les Prefetch sont désactivé par défault sur les SSD
 
-
-
 Les noms de fichiers Prefetch suivent un format définis:
 
 - Nom de l'exe en majuscule
 - un tiret
 - Un hash de 8 caractères de la localisation de l'appli
 - une extension `.pf`
-
-
 
 Les fichiers Prefetch contiennent:
 
@@ -411,15 +338,9 @@ Contiens également 2 timestamps:
 - Le temps de la dernière execution de l'appli (version 26 garde les 7 dernières executions)
 - Le temps de création du volume sur lequel le fichier Prefetch a été créé.
 
-
-
 ##### Registry Keys
 
 `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters`
-
-
-
-
 
 ## Réunion
 
@@ -436,10 +357,6 @@ Contiens également 2 timestamps:
 
 21 juin: yara -d, parametre externe
 
-
-
-
-
 ## Journal
 
 #### Tentative yara
@@ -451,8 +368,6 @@ Contiens également 2 timestamps:
 - Registry
 - Evtx
 
-
-
 ##### Sans monter le disque
 
 - [x] Prendre en-tete et fin de programme en hexa, fair gaffe a chaque version
@@ -460,55 +375,24 @@ Contiens également 2 timestamps:
 - [ ] Strings dans le disque qui correspond au programme voulu
 - [ ] evtxtract: sors les evtx san,s monter le disque
 
-
-
 #### Méthode
 
 - Install a software on a machine, change the machine into a raw format.
 
 - Uninstall the software and change again the machine into a raw format
 
-
-
 - keep the principal exe of the software and take the first 30 lines of hexadecimal of this exe and to the same with the end of the exe:
 
 `xxd my_disk.img | head -n 30 | cut -c11-50`            `xxd my_disk.img | tail -n 30 | cut -c11-50`
-
-
 
 - After that, do `strings` on the exe and look for line who can be find only in this exe: `name="PuTTY"`
 
 If no line is usable, do without.
 
-
-
 - You can do `strings` on the disk with `grep `  to see all readable output who match with the software
-
-
 
 - Finally just try your rule yara on the disk and apply some change if the rule is too general:
 
 `yara -s -w my_rule.yar my_disk.img`
 
-
-
-
-
 - `fls -o 104448 -r out.img > out_fls` : create the tree of the raw image 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

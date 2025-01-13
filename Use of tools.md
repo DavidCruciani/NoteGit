@@ -1,44 +1,34 @@
 # Use of tools
 
- `VBoxManage clonehd windows2012.vdi output.img --format RAW`: passer de disque vdi pour vbox à un disque exploitable pour TSK
-
-`qemu-img convert -f vmdk -O raw image.vmdk image.img`
-
 ### The Sleuth Kit
 
 `mmstat output.img` donne le type de volume du systeme
-
-
 
 `mmls -t dos output.img` donne les differents secteur du disk
 
 `-t`: permet de préciser le type de file system
 
-
-
 `fls -o 718848 output.img` donne la liste d'allocation et les noms des fichiers supprimés
 
 `-o`: permet de préciser une adresse de début
 
-
-
 `fls -r -m "/" -o 718848 output.img > bodyfile.txt` donne le même résultat mais en récursif et avec les timelines
-
-
 
 `mactime -b bodyfile.txt -d > timeline.csv` donne une timeline de l'activité des fichiers lisible avec Excel
 
-
-
 `icat -o 718848 output.img 18533 | strings | less`:  cat sur l'ecran le contenu du node 18533 se trouvant dans la partition commencant en 718848
-
-
 
 `fls -o 104448 -r out_winrar.img > out_winrar_fls`
 
+### Convert a Disk
 
+#### VBoxManage
 
+`VBoxManage clonehd windows2012.vdi output.img --format raw`: passer de disque vdi pour vbox à un disque exploitable pour TSK
 
+#### Qemu
+
+`qemu-img convert -f vmdk -O raw image.vmdk image.img`
 
 ### Monter un disk
 
@@ -49,14 +39,10 @@ Pour monter le disk:
 `sudo mount -o loop,ro,noexec,noload,offset=$((512*718848)) output.img /mnt/win12
 ntfs-3g-mount: failed to access mountpoint /mnt/win12: No such file or directory`
 
-
-
 Il faut donc créer le dossier:
 
 `sudo mkdir /mnt/win12
 Sorry, user dacruciani is not allowed to execute '/usr/bin/mkdir /mnt/win12' as root on cci.`
-
-
 
 #### Solution
 
@@ -66,9 +52,7 @@ N'ayant pas les droits pour le monter sur le vrai `/mnt`, il faut le creer en lo
 
 et ensuite le monter:
 
-`sudo mount -o loop,ro,noexec,noload,offset=$((512*718848)) output.img ./mnt/win12`
-
-
+`sudo mount -o loop,ro,noexec,noload,offset=$((512*104448)) output.img mnt_pts`
 
 ### Git Status
 
@@ -77,8 +61,6 @@ To list only untracked files
 ```
 git ls-files --others --exclude-standard
 ```
-
-
 
 ### Compare 2 tree folder
 
@@ -90,17 +72,18 @@ find d2 -type d -printf "%P\n" | sort | diff -u - f1 > diff_d1_d2
 ### Méthode
 
 - [x] `fls` et `mactime` coté plutot filesystem
-    - [x] `mount` le filesystem
-    - [ ] prefetch
-    - [x] Browser history (bdd sqlite)
-    - [x] evtx (log system)
-    - [x] Recent file
-    
+  
+  - [x] `mount` le filesystem
+  - [ ] prefetch
+  - [x] Browser history (bdd sqlite)
+  - [x] evtx (log system)
+  - [x] Recent file
+
 - [ ] Mettre en correlation et faire l'histoire de la machine
 
+### VBox
 
-
-### VBox Headless
+#### Headless
 
 https://www.oracle.com/technical-resources/articles/it-infrastructure/admin-manage-vbox-cli.html
 
@@ -113,12 +96,9 @@ VBoxManage modifyvm "Windows10" --vrdeauthtype null
 VBoxManage modifyvm "Windows10" --vrde on --vrdeport 7474
 
 VBoxManage storagectl Windows10 --name "IDE Controller" --add ide
- VBoxManage storageattach Windows10 --storagectl "IDE Controller" --port 0 --device 0 --type dvddrive --medium \ /usr/share/virtualbox/VBoxGuestAdditions.iso
+VBoxManage storageattach Windows10 --storagectl "IDE Controller" --port 0 --device 0 --type dvddrive --medium \ /usr/share/virtualbox/VBoxGuestAdditions.iso
 VBoxManage sharedfolder add Windows10 --name PartageVM --hostpath PartageVM/
-
 ```
-
-
 
 PuTTY:
 
@@ -127,6 +107,24 @@ Tunnel SSH:
 `Source port: port machine qui va se connecter`  exemple:  `5000`
 
 `Destination: ipaddr:port du service` exemple: `192.168.1.1:3389`
+
+#### Delete hdd uuid
+
+```bash
+vboxmanage list hdds
+```
+
+### Hash All Files
+
+```bash
+find path_to_hash -type f -exec md5sum '{}' \; > md5sum.txt`
+```
+
+By excluding `md5sum.txt`
+
+```bash
+find -type f \( -not -name "md5sum.txt" \) -exec md5sum '{}' \; > md5sum.txt
+```
 
 ### Analyse du disk
 
@@ -142,8 +140,6 @@ https://www.sans.org/security-resources/posters/windows-forensic-analysis/170/do
 
 `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters`
 
-
-
 #### Browser
 
 - [x] recuperation
@@ -154,8 +150,6 @@ Explorer: `C:\Users\<username>\AppData\Local\Microsoft\Windows\WebCache\`
 
 - [x] Firefox: `C:\Users\<username>\AppData\Roaming\Mozilla\Firefox` 
 
-
-
 ##### python-sqlite-to-csv
 
 https://github.com/Farigen/python-sqlite-to-csv
@@ -163,8 +157,6 @@ https://github.com/Farigen/python-sqlite-to-csv
 When obtain the browser history, we have a sqlite file.
 
 This program in python change the sqlite file into a csv file
-
-
 
 #### Logs
 
@@ -196,8 +188,6 @@ def main():
 main()
 ```
 
-
-
 ##### Python-evtx
 
 https://github.com/williballenthin/python-evtx
@@ -209,8 +199,6 @@ pip install python-evtx
 
 evtxdump Application.evtx > app.xml
 ```
-
-
 
 ##### EVTXtract
 
@@ -224,10 +212,6 @@ pip install evtxtract
 evtxtract out.img > evtx.xml
 ```
 
-
-
-
-
 #### Recent
 
 - [x] recuperation
@@ -236,13 +220,9 @@ Location_lnk: `/VM/Windows_2012/mnt/win12/Users/admin/Recent`
 
 Location_jmp: `/VM/Windows_2012/mnt/win12/Users/admin/Recent/AutomaticDestination`
 
-
-
 jmp_util:<span style="color:blue;"> Nom d'application peuvent etre obtenu</span>
 
 lnk_util:<span style="color:blue;"> chemin d'application peuvent etre obtenu</span>
-
-
 
 ##### JumpList_Lnk_Parser
 
@@ -252,10 +232,6 @@ This code give some infomration on jump list file and lnk file
 
 <u>Note</u>: the output of the program is not optimal and display more than once for a unique jmp file analysis
 
-
-
-
-
 #### Registry
 
 - [x] recuperation
@@ -264,7 +240,7 @@ Location: `Windows/System32/config`
 
 Location: `Users/admin/NTUSER.dat`
 
-##### regrip.py 
+##### regrip.py
 
 Outil non trivial, necessite tjrs de préciser un plugins à la fin de la commande
 
@@ -278,17 +254,9 @@ timeline
 
 `mactime -b bodytime.txt -d > timeline_registry.csv`
 
-
-
 To install software key: `Microsoft/Windows/CurrentVersion/Uninstall`
 
-
-
 <span style="color:blue;">Application install folder can be obtain</span>
-
-
-
-
 
 https://miloserdov.org/?p=5448
 
@@ -304,14 +272,11 @@ registry-plugins-run /home/dacruciani/VM/Windows_2012/mnt/win12/Windows/System32
 registry-parse-header /home/dacruciani/VM/Windows_2012/mnt/win12/Windows/System32/config/SOFTWARE
 
 registry-dump NTUSER.DAT -o ntusr.json
-
 ```
 
 `cat ntusr.json | grep -i LastVisited | less`: permet d'obtenir les fichiers lancé en derniers (Hexa)
 
 `cat ntusr.json | grep -i UserAssist | less` : User Assist (ROT13)
-
-
 
 ##### virt-win-reg
 
@@ -360,17 +325,11 @@ ls -l '/tmp/reg/Microsoft/Windows/CurrentVersion/Run/(values)/'
 for X in '/tmp/reg/Microsoft/Windows/CurrentVersion/Run/(values)/'*; do echo -en "$X\n "; cat "$X"; echo; done
 ```
 
-
-
-
-
 #### Wine utilisation
 
 `wine rip.exe -p Z:/home/dacruciani/VM/Windows_2012/mnt/win12/ -r SYSTEM`
 
 miss of `wine32`
-
-
 
 #### libguestfs
 
@@ -378,8 +337,6 @@ Cet outil contient une librairie permettant de comparer 2 état d'une VM: `virt-
 
 Erreur: `libguestfs: error: file receive cancelled by daemon
 virt-diff: error getting extended attrs for /Users/Administrateur/AppData/Local/Packages/Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy/LocalState/TargetedContentCache/v3/280811 a85dd791c185464cb6f68cacdcb95f61_3`
-
-
 
 En essayant d'utiliser *guestmount* qui permet de monter un disque virtuel j'ai eu la meme erreur, pour la corriger il faut que le kernel soit lisible:
 
@@ -407,12 +364,6 @@ def list_files(startpath):
 list_files(sys.argv[1])
 ```
 
-
-
-
-
-
-
 ### Tips
 
 #### Tmux
@@ -420,8 +371,6 @@ list_files(sys.argv[1])
 https://tmuxcheatsheet.com/
 
 `exec su -l dacruciani` pour tmux pour refresh la session
-
-
 
 #### Linux
 
@@ -441,15 +390,11 @@ Size of a specific folder
 du -sh /path/to/folder
 ```
 
-
-
 execute a command for each line of a file
 
-~~~bash
+```bash
 while read in; do git clone "$in"; done < file.txt
-~~~
-
-
+```
 
 ##### sed
 
@@ -458,8 +403,6 @@ delete line that match pattern `u` in file
 ```
 sed '/u/d' file
 ```
-
-
 
 ##### python
 
@@ -479,29 +422,19 @@ source pythonregrip/bin/activate
 deactivate
 ```
 
-
-
 ##### Redis
 
 get all keys and values from redis db
 
-~~~~bash
+```bash
 for i in $(redis-cli KEYS '*'); do echo $i; redis-cli GET $i; done > out.txt
-~~~~
-
-
-
-
+```
 
 #### Windows
 
 ##### Fill a space disk
 
 `fsutil file createnew temp_10GB_file 1000000000`
-
-
-
-
 
 ### Installation
 
@@ -532,7 +465,7 @@ apt-get install -y libparse-win32registry-perl -y ###### I install it by myself 
 
 # Downloads RegRipper3.0 and moves file into /usr/local/src/regripper and "chmods" files in regripper directory to allow execution
 
-cd /usr/local/src/		##### I change location of install 
+cd /usr/local/src/        ##### I change location of install 
 sudo rm -r /usr/local/src/regripper/ 2>/dev/nul       ###### No reason to delete if ther's nothing in
 sudo rm -r /usr/share/regripper/plugins 2>/dev/nul
 
@@ -560,10 +493,7 @@ md5sum /usr/local/src/regripper/rip.pl.linux && echo "rip.pl.linux file created!
 # Copy rip.pl.linux to /usr/local/bin/rip.pl
 cp regripper/rip.pl.linux /usr/local/bin/rip.pl && echo “ Success /usr/local/src/regripper/rip.pl.linux copied to /usr/local/bin/rip.pl”
 /usr/local/bin/rip.pl  && printf "\n\n  Regipper file rip.pl has been changed!!\n  Original file is located in /usr/local/src/regripper/rip.pl\n\n"
-
 ```
-
-
 
 #### regrippy
 
@@ -583,70 +513,3 @@ donc ajout au PATH:
 ```bash
 export PATH="/home/dacruciani/.local/bin:$PATH"
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
